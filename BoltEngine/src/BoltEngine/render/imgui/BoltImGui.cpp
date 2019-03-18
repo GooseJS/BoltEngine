@@ -1,5 +1,8 @@
 #include "BoltEngine/render/imgui/BoltImGui.h"
 
+#include "BoltEngine/GameSettings.h"
+#include "BoltEngine/event/EventSystem.h"
+
 #ifdef _WIN32
 #undef APIENTRY
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -71,7 +74,7 @@ namespace Bolt
 		glfwWindowHint(GLFW_VISIBLE, false);
 		glfwWindowHint(GLFW_FOCUSED, false);
 		glfwWindowHint(GLFW_DECORATED, (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? false : true);
-		GLFWwindow* shareWindow = GameSettings::getInstance().windowCfg->glfwWindow;
+		GLFWwindow* shareWindow = GameSettings::getInstance().getMainWindow().getGLFWWindow();
 		data->Window = glfwCreateWindow((int)viewport->Size.x, (int)viewport->Size.y, "No title yet", nullptr, shareWindow);
 		data->WindowOwned = true;
 		viewport->PlatformHandle = (void*)data->Window;
@@ -488,9 +491,9 @@ namespace Bolt
 		setup();
 
 		EventSystem& es = EventSystem::getInstance();
-		es.addListener<MouseButtonEvent>(APOLLO_SUBSCRIBE_EVENT(&BoltImGui::mouseButtonEvent));
-		es.addListener<KeyboardKeyEvent>(APOLLO_SUBSCRIBE_EVENT(&BoltImGui::keyboardEvent));
-		es.addListener<EventMouseScroll>(APOLLO_SUBSCRIBE_EVENT(&BoltImGui::scrollEvent));
+		es.addListener<MouseButtonEvent>(BOLT_SUBSCRIBE_EVENT(&BoltImGui::mouseButtonEvent));
+		es.addListener<KeyboardKeyEvent>(BOLT_SUBSCRIBE_EVENT(&BoltImGui::keyboardEvent));
+		es.addListener<EventMouseScroll>(BOLT_SUBSCRIBE_EVENT(&BoltImGui::scrollEvent));
 
 		createDeviceObjects();
 
@@ -515,7 +518,7 @@ namespace Bolt
 		if (_wantUpdateMonitors)
 			updateMonitors();
 
-		io.DeltaTime = GameSettings::getInstance().gameTime->getDeltaTime();
+		io.DeltaTime = GameSettings::getInstance().getGameTime().getDeltaTime();
 
 		updateMousePosAndButtons();
 

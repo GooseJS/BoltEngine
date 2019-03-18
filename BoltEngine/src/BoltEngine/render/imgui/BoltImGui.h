@@ -8,8 +8,6 @@
 #include "BoltEngine/InputEvents.h"
 #include "BoltEngine/window/Window.h"
 #include "BoltEngine/render/Shader.h"
-#include "BoltEngine/event/EventSystem.h"
-#include "BoltEngine/window/WindowEvents.h"
 
 namespace Bolt
 {

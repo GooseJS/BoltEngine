@@ -15,19 +15,19 @@ namespace Bolt
 	private:
 		double _deltaTime = 0;
 		double _lastFrameTime = 0;
-		double _currentFrameTime =  0;
+		double _currentTime =  0;
 	public:
-		BoltTime() { _currentFrameTime = glfwGetTime(); _deltaTime = _currentFrameTime; _lastFrameTime = _currentFrameTime; }
+		BoltTime() { _currentTime = glfwGetTime() * 1000; _deltaTime = _currentTime; _lastFrameTime = _currentTime; }
 
 		double getLastFrameTime() const { return _lastFrameTime; }
-		double getCurrentFrameTime() const { return _currentFrameTime; }
+		double getCurrentTime() const { return _currentTime; }
 		float getDeltaTime() const { return _deltaTime; }
 
 		inline void newFrame()
 		{
-			_currentFrameTime = glfwGetTime();
-			_deltaTime = _currentFrameTime - _lastFrameTime;
-			_lastFrameTime = _currentFrameTime;
+			_currentTime = glfwGetTime() * 1000;
+			_deltaTime = _currentTime - _lastFrameTime;
+			_lastFrameTime = _currentTime;
 		}
 	};
 
@@ -46,8 +46,10 @@ namespace Bolt
 		GameSettings(const GameSettings& gs) {}
 		GameSettings& operator=(const GameSettings& gs) = delete;
 
+		friend class BoltApplication;
 		BoltTime _gameTime;
 		InternalData _internalData;
+		Window* _mainWindow;
 	public:
 		static GameSettings& getInstance()
 		{
@@ -63,6 +65,11 @@ namespace Bolt
 		InternalData& getInternalData()
 		{
 			return _internalData;
+		}
+
+		Window& getMainWindow()
+		{
+			return *_mainWindow;
 		}
 	};
 }
