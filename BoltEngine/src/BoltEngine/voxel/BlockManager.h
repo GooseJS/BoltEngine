@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "BoltEngine/Core.h"
 #include "BoltEngine/voxel/Block.h"
 
 namespace Bolt
@@ -14,22 +15,22 @@ namespace Bolt
 	// This could potentially cause issues with saves, but is only temporary
 	// Blocks should override the functions defined in the Block class to add functionality (see Bolt::Voxel::Block)
 
-	class BlockManager
+	class BOLT_API BlockManager
 	{
 	private:
 		std::vector<Block*> _registeredBlocks;
 	public:
-		static BlockManager& getInstance()
-		{
-			static BlockManager instance;
-			return instance;
-		}
+		static BlockManager& getInstance();
 		
-		template <class BlockType>
-		BlockType& registerBlock();
+		Block& registerBlock(Block* block);
 
 		Block& getBlock(BlockID id);
 		Block& getBlock(const std::string& name);
+
+		template <class BlockType>
+		inline BlockType& getBlockAs(BlockID id) { return dynamic_cast<BlockType>(getBlock(id)); }
+		template <class BlockType>
+		inline BlockType& getBlockAs(const std::string& name) { return dynamic_cast<BlockType>(getBlock(name)); }
 
 		// TODO (Brendan): Is this needed?
 		//template <class BlockType>

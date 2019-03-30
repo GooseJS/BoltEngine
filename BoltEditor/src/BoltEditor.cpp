@@ -1,7 +1,9 @@
 #include <Bolt.h>
 #include <BoltEngine/voxel/Block.h>
 #include <BoltEngine/BoltApplication.h>
+#include <BoltEngine/voxel/BlockManager.h>
 #include <BoltEngine/render/imgui/BoltImGui.h>
+#include <BoltEngine/voxel/Chunk.h>
 
 namespace Bolt
 {
@@ -10,13 +12,17 @@ namespace Bolt
 		class BlockAir : public Block
 		{
 		public:
-			BlockAir(BlockID id) : Block(id) {}
+			BlockAir() {}
+
+			virtual const std::string getName() override { return "bolt::air"; }
 		};
 		
 		class BlockDirt : public Block
 		{
 		public:
-			BlockDirt(BlockID id) : Block(id) {} // TODO (Brendan): Move BlockNameGen into the block manager and seperate into modules / mods (bolt == base game)
+			BlockDirt(){} // TODO (Brendan): Move BlockNameGen into the block manager and seperate into modules / mods (bolt == base game)
+
+			virtual const std::string getName() override { return "bolt::dirt"; }
 
 			virtual bool shouldRender() override { return true; }
 		};
@@ -24,11 +30,29 @@ namespace Bolt
 		class BoltEditor : public BoltApplication
 		{
 		private:
+			BlockAir* AIR_BLOCK;
+			BlockDirt* DIRT_BLOCK;
+
+			Chunk chunk;
 		public:
+			BoltEditor() : chunk(ChunkPos())
+			{
+
+			}
+
 			virtual void onStartup() override
 			{
 				ImGuiContext* imGuiContext = Bolt::BoltImGui::getInstance().init(getMainWindow());
 				ImGui::SetCurrentContext(imGuiContext);
+
+				AIR_BLOCK = dynamic_cast<BlockAir*>(&BlockManager::getInstance().registerBlock(new BlockAir()));
+				DIRT_BLOCK = dynamic_cast<BlockDirt*>(&BlockManager::getInstance().registerBlock(new BlockDirt()));
+
+				BOLT_INFO("Air ID: {} | should render: {}", AIR_BLOCK->getID(), AIR_BLOCK->shouldRender());
+				BOLT_INFO("Dirt ID: {} | should render: {}", DIRT_BLOCK->getID(), DIRT_BLOCK->shouldRender());
+
+				chunk.setBlockAt(BlockPos(10, 10, 10), *DIRT_BLOCK);
+				BOLT_INFO("Block at 10, 10, 10: {}", chunk.getBlockAt(BlockPos(10, 10, 10)).getName());
 			}
 
 			virtual void update() override

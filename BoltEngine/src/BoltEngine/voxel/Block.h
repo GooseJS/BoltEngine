@@ -11,14 +11,14 @@ namespace Bolt
 	private:
 		friend class BlockManager;
 		
-		const BlockID _id;
+		BlockID _id;
 		Texture::TextureArray::Key _texture;
-	protected:
-		Block(BlockID id) : _id(id) {}
-
 	public:
+		Block() {}
+
 		const BlockID getID() { return _id; }
-		virtual const std::string getName() = 0;
+
+		virtual const std::string getName() { return "bolt::nullptr"; };
 
 		inline operator BlockID() { getID(); }
 

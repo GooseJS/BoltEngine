@@ -4,13 +4,18 @@
 
 namespace Bolt
 {
-	template <class BlockType>
-	BlockType& BlockManager::registerBlock()
+	BlockManager& BlockManager::getInstance()
+	{
+		static BlockManager instance;
+		return instance;
+	}
+
+	Block& BlockManager::registerBlock(Block* block)
 	{
 		BlockID blockID = _registeredBlocks.size();
-		BlockType* blockInstance = new BlockType(blockID);
-		_registeredBlocks.push_back(blockInstance);
-		return *blockInstance;
+		block->_id = blockID;
+		_registeredBlocks.push_back(block);
+		return *block;
 	}
 
 	Block& BlockManager::getBlock(BlockID id)
