@@ -5,6 +5,8 @@
 #include <BoltEngine/render/imgui/BoltImGui.h>
 #include <BoltEngine/voxel/Chunk.h>
 
+#include <BoltEngine/voxel/World.h>
+
 namespace Bolt
 {
 	namespace Editor
@@ -33,9 +35,9 @@ namespace Bolt
 			BlockAir* AIR_BLOCK;
 			BlockDirt* DIRT_BLOCK;
 
-			Chunk chunk;
+			World world;
 		public:
-			BoltEditor() : chunk(ChunkPos())
+			BoltEditor()
 			{
 
 			}
@@ -51,8 +53,8 @@ namespace Bolt
 				BOLT_INFO("Air ID: {} | should render: {}", AIR_BLOCK->getID(), AIR_BLOCK->shouldRender());
 				BOLT_INFO("Dirt ID: {} | should render: {}", DIRT_BLOCK->getID(), DIRT_BLOCK->shouldRender());
 
-				chunk.setBlockAt(BlockPos(10, 10, 10), *DIRT_BLOCK);
-				BOLT_INFO("Block at 10, 10, 10: {}", chunk.getBlockAt(BlockPos(10, 10, 10)).getName());
+				world.setBlockAt(BlockPos(65, 75, 36), *DIRT_BLOCK);
+				BOLT_INFO("Block at 10, 10, 10: {}", world.getBlockAt(BlockPos(65, 75, 36)).getName());
 			}
 
 			virtual void update() override

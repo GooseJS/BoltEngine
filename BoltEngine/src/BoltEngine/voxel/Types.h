@@ -13,8 +13,14 @@
 #define BOLT_BLOCK_WIDTH 16
 #endif
 
+#ifndef BOLT_WORLD_HEIGHT
+#define BOLT_WORLD_HEIGHT 16
+#endif
+
 namespace Bolt
 {
+
+
 	struct BlockPos
 	{
 		int x;
@@ -50,6 +56,8 @@ namespace Bolt
 			y = blockPos.y >> 4;
 			z = blockPos.z >> 4;
 		}
+
+        BlockPos toBlockPos(int x, int y, int z);
 	};
 
 	struct ChunkBlockPos

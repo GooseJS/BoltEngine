@@ -26,7 +26,7 @@ include "premake/imgui"
 
 project "BoltEngine"
 	location "BoltEngine"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 	staticruntime "off"
 
@@ -74,11 +74,6 @@ project "BoltEngine"
 		{
 			"BOLT_WIN32",
 			"BOLT_BUILD_DLL"
-		}
-
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../data"),
 		}
 
 	filter "configurations:Debug"
