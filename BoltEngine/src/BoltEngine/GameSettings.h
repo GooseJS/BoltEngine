@@ -49,7 +49,7 @@ namespace Bolt
 		friend class BoltApplication;
 		BoltTime _gameTime;
 		InternalData _internalData;
-		Window* _mainWindow;
+		class Window* _mainWindow;
 	public:
 		static GameSettings& getInstance()
 		{
@@ -67,9 +67,9 @@ namespace Bolt
 			return _internalData;
 		}
 
-		Window& getMainWindow()
+		Window* getMainWindow()
 		{
-			return *_mainWindow;
+			return _mainWindow;
 		}
 	};
 }

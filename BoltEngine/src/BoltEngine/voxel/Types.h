@@ -69,7 +69,7 @@ namespace Bolt
 		ChunkPos chunkPos;
 
 		ChunkBlockPos() : x(0), y(0), z(0) {}
-		ChunkBlockPos(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
+		ChunkBlockPos(int _x, int _y, int _z, ChunkPos _chunkPos) : x(_x), y(_y), z(_z), chunkPos(_chunkPos) {}
 
 		ChunkBlockPos(const BlockPos& blockPos)
 		{

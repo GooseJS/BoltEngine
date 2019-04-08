@@ -6,14 +6,14 @@
 
 namespace Bolt
 {
-	typedef struct BoltChunkMeshVertex
+	struct BoltChunkMeshVertex
 	{
 		float vertexPosition[3];
 		float vertexNormal[3];
-		float texCoord[3];
+		int texCoord[3];
 	};
 
-	typedef struct BoltChunkMeshTriangle
+	struct BoltChunkMeshTriangle
 	{
 		unsigned int vertexIndices[3];
 	};
@@ -21,15 +21,15 @@ namespace Bolt
 	class BoltChunkMesh
 	{
 	private:
-		std::vector<BoltChunkMeshTriangle*> _triangles;
-		std::vector<BoltChunkMeshVertex*> _vertices;
+		std::vector<BoltChunkMeshTriangle> _triangles;
+		std::vector<BoltChunkMeshVertex> _vertices;
 	public:		
 		bool building = false;
 		bool initialized = false;
 
-		unsigned int _vaoID;
-		unsigned int _vertexBufferID;
-		unsigned int _indexBufferID;
+		GLuint _vaoID;
+		GLuint _vertexBufferID;
+		GLuint _indexBufferID;
 
 		unsigned int numVertices = 0;
 		unsigned int numIndices = 0;

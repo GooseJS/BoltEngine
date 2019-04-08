@@ -8,13 +8,15 @@ namespace Bolt
 
 	enum BoltBlockFace
 	{
-		BLOCK_FACE_X_POSITIVE = 0,
-		BLOCK_FACE_X_POSITIVE = 1,
-		BLOCK_FACE_X_POSITIVE = 2,
-		BLOCK_FACE_X_POSITIVE = 3,
-		BLOCK_FACE_X_POSITIVE = 4,
-		BLOCK_FACE_X_POSITIVE = 5,
-		SIZE				  = 6
+		BLOCK_FACE_X_POSITIVE	= 0,
+		BLOCK_FACE_X_NEGATIVE	= 1,
+		BLOCK_FACE_Y_POSITIVE	= 2,
+		BLOCK_FACE_Y_NEGATIVE	= 3,
+		BLOCK_FACE_Z_POSITIVE	= 4,
+		BLOCK_FACE_Z_NEGATIVE	= 5,
+		SIZE					= 6,
+		SIDES					= 7,
+		ALL						= 8
 	};
 
 	class Block
@@ -24,6 +26,8 @@ namespace Bolt
 		
 		BlockID _id;
 		Texture::TextureArray::Key _texture[BoltBlockFace::SIZE];
+
+		std::unordered_map<BoltBlockFace, std::string> _faceTextures;
 	public:
 		Block() {}
 

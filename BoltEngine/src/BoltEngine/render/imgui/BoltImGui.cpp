@@ -74,7 +74,7 @@ namespace Bolt
 		glfwWindowHint(GLFW_VISIBLE, false);
 		glfwWindowHint(GLFW_FOCUSED, false);
 		glfwWindowHint(GLFW_DECORATED, (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? false : true);
-		GLFWwindow* shareWindow = GameSettings::getInstance().getMainWindow().getGLFWWindow();
+		GLFWwindow* shareWindow = GameSettings::getInstance().getMainWindow()->getGLFWWindow();
 		data->Window = glfwCreateWindow((int)viewport->Size.x, (int)viewport->Size.y, "No title yet", nullptr, shareWindow);
 		data->WindowOwned = true;
 		viewport->PlatformHandle = (void*)data->Window;
@@ -664,6 +664,7 @@ namespace Bolt
 
 	void BoltImGui::render()
 	{
+		glDisable(GL_DEPTH_TEST);
 		ImGui::Render();
 		ImDrawData* drawData = ImGui::GetDrawData();
 		renderDrawData(drawData);

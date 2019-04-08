@@ -19,10 +19,23 @@ namespace Bolt
 	{
 	private:
 		std::vector<Block*> _registeredBlocks;
+		std::vector<std::string> _neededTextures;
+		Texture::TextureArray _textureArray;
+
+		void loadBlockTextures(Block* block);
 	public:
+		BlockManager() {}
+		~BlockManager()
+		{
+
+		}
+
 		static BlockManager& getInstance();
 		
 		Block& registerBlock(Block* block);
+		void requireTexture(std::string texture);
+
+		void createTexture();
 
 		Block& getBlock(BlockID id);
 		Block& getBlock(const std::string& name);

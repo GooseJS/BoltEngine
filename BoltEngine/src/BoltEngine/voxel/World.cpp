@@ -2,7 +2,7 @@
 
 namespace Bolt
 {
-	ChunkPtr ChunkProvider::getChunkAt(ChunkPos pos)
+	ChunkPtr World::getChunkAt(ChunkPos pos)
 	{
 		pos.y = 0;
 		ChunkPtr foundChunk;
@@ -13,6 +13,7 @@ namespace Bolt
 		else
 		{
 			foundChunk = new Chunk(pos);
+			foundChunk->setContainingWorld(this);
 			_chunkMap.insert(std::make_pair(pos.value, foundChunk));
 		}
 		return foundChunk;
@@ -20,11 +21,11 @@ namespace Bolt
 
 	Block& World::getBlockAt(BlockPos pos)
 	{
-		return _chunkProvider.getChunkAt(pos)->getBlockAt(pos);
+		return getChunkAt(pos)->getBlockAt(pos);
 	}
 
 	Block& World::setBlockAt(BlockPos pos, Block& block)
 	{
-		return _chunkProvider.getChunkAt(pos)->setBlockAt(pos, block);
+		return getChunkAt(pos)->setBlockAt(pos, block);
 	}
 }

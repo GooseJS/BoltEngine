@@ -12,6 +12,8 @@ namespace Bolt
 		int windowWidth = 1280;
 		int windowHeight = 720;
 
+		float aspectRatio = 1280.0f / 720.0f;
+
 		std::string windowTitle = "Bolt Engine";
 	};
 
@@ -47,9 +49,13 @@ namespace Bolt
 		inline bool isKeyPressed(int keyCode) { return glfwGetKey(_window, keyCode) != GLFW_RELEASE; }
 		inline bool isMouseButtonPressed(int button) { return glfwGetMouseButton(_window, button) != GLFW_RELEASE; }
 
+		inline void enableCursor() { glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
+		inline void disableCursor() { glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); }
+
 		inline double getMouseX() { double x = 0, y = 0; glfwGetCursorPos(_window, &x, &y); return x; }
 		inline double getMouseY() { double x = 0, y = 0; glfwGetCursorPos(_window, &x, &y); return y; } // Note (Brendan): What the fuck
 
 		inline GLFWwindow* getGLFWWindow() { return _window; } // TODO (Brendan): TBH, I don't really think this should be exposed. I think ImGui needs it but we can just make it a friend??
+		inline WindowCfg& getWindowCfg() { return _windowCfg; }
 	};
 }

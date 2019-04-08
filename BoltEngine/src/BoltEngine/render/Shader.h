@@ -65,7 +65,7 @@ namespace Bolt
 			glGetShaderiv(shaderID, GL_COMPILE_STATUS, &shaderStatus);
 			if (shaderStatus == GL_FALSE)
 			{
-				BOLT_ENGINE_CRITICAL("Shader copilation failed. Type: {} - Error: {}", shaderTypeString, getInfoLog(ShaderObjectType::SHADER, shaderID));
+				BOLT_ENGINE_CRITICAL("Shader compilation failed. Type: {} - Error: {}", shaderTypeString, getInfoLog(ShaderObjectType::SHADER, shaderID));
 				return -1;
 			}
 

@@ -1,65 +1,55 @@
 #include "Camera.h"
 
-#include <glm/gtc/quaternion.hpp>
-#include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
 
-const float PI = 3.14159265358979323846f;
-
-inline float degreeToRad(const float deg)
-{
-	return (deg * PI) / 180;
-}
-
-inline float radToDegree(const float radians)
-{
-	return (radians * 180) / PI;
-}
+#include "BoltEngine/window/Window.h"
+#include "BoltEngine/GameSettings.h"
 
 namespace Bolt
 {
-	Camera::Camera()
+	void Camera::generateProjectionMatrix()
 	{
-		setPos(glm::vec3(0.0f, 0.0f, 0.0f));
-		setFacing(glm::vec3(0.0f, 0.0f, 1.0f));
-		setUp(glm::vec3(0.0f, 1.0f, 0.0f));
-		setRight(glm::vec3(1.0f, 0.0f, 0.0f));
-
-		_zoom = 10.0f;
-		_minZoom = 0.5f;
-		_maxZoom = 100.0f;
+		if (Bolt::GameSettings::getInstance().getMainWindow() != nullptr)
+		{
+			_projectionMatrix = glm::perspective(glm::radians(_fov), Bolt::GameSettings::getInstance().getMainWindow()->getWindowCfg().aspectRatio, 0.1f, 1000.0f);
+			_rebuildProjectionMatrix = false;
+		}
 	}
 
-	void Camera::move(const float speed)
+	void Camera::generateMatrices()
 	{
-		_position += _facing * speed;
+		_direction = glm::normalize(glm::vec3(cos(glm::radians(_pitch)) * cos(glm::radians(_yaw)), sin(glm::radians(_pitch)), cos(glm::radians(_pitch)) * sin(glm::radians(_yaw))));
+		_right = glm::normalize(glm::cross(_worldUp, _direction));
+		_up = glm::normalize(glm::cross(_direction, _right));
+
+		_viewMatrix = glm::lookAt(_position, _position + _direction, _worldUp);
+		if (_rebuildProjectionMatrix)
+			generateProjectionMatrix();
 	}
 
-	void Camera::strafe(const float speed)
+	void Camera::rotateCamera(float rotX, float rotY)
 	{
-		_position.x += _right.x * speed;
-		_position.y += _right.y * speed;
-		_position.z += _right.z * speed;
+		_yaw += _mouseSpeed * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * rotX;
+		_pitch += _mouseSpeed * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * rotY;
+
+		if (_pitch > 89.0f) _pitch = 89.0f;
+		else if (_pitch < -89.0f) _pitch = -89.0f;
+
+		if (_yaw > 360.0f) _yaw = 0.f;
+		if (_yaw < 0.f) _yaw = 360.0f;
 	}
 
-	void Camera::rotate(const float rotX, const float rotY, const float rotZ)
+	void Camera::moveCamera(float forwardBack, float strafe, float upDown)
 	{
-		glm::quat xRot = angleAxis(degreeToRad(rotX), _right);
-		glm::quat yRot = angleAxis(degreeToRad(rotY), _up);
-		glm::quat zRot = angleAxis(degreeToRad(rotZ), _facing);
-
-		glm::quat rotation = xRot * yRot * zRot;
-
-		_right = normalize(rotation * _right);
-		_up = normalize(rotation * _up);
-		_facing = normalize(rotation * _facing);
+		_position += _direction * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * forwardBack;
+		_position -= _right * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * strafe;
+		_position += _up * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * upDown;
 	}
 
-	void Camera::zoom(const float amount)
+	void Camera::setCameraPos(float x, float y, float z)
 	{
-		_zoom += amount;
-		if (_zoom <= _minZoom)
-			_zoom = _minZoom;
-		else if (_zoom >= _maxZoom)
-			_zoom = _maxZoom;
+		_position.x = x;
+		_position.y = y;
+		_position.z = z;
 	}
 }

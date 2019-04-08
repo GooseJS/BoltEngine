@@ -23,11 +23,11 @@ namespace Bolt
 
 	Block& Chunk::getBlockAt(ChunkBlockPos pos)
 	{
-		return _storage[pos.y].getBlockAt(pos.index());
+		return _storage[pos.chunkPos.y].getBlockAt(pos.index());
 	}
 	
 	Block& Chunk::setBlockAt(ChunkBlockPos pos, Block& block)
 	{
-		return _storage[pos.y].setBlockAt(pos.index(), block);
+		return _storage[pos.chunkPos.y].setBlockAt(pos.index(), block);
 	}
 }

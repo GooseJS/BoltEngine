@@ -15,5 +15,6 @@ namespace Bolt
         retVal.x = (x * BOLT_CHUNK_WIDTH) + _x;
         retVal.y = (y * BOLT_CHUNK_WIDTH) + _y;
         retVal.z = (z * BOLT_CHUNK_WIDTH) + _z;
+		return retVal;
     }
 }
