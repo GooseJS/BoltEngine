@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "BlockManager.h"
+
 namespace Bolt
 {
 	void WorldRenderer::initRenderer()
@@ -164,6 +166,22 @@ namespace Bolt
 		}
     }
 
+	void WorldRenderer::buildChunks(World* world)
+	{
+		if (world->getChunksToRebuild().empty())
+			return;
+
+		for (auto chunkIter = world->getChunksToRebuild().begin(); chunkIter != world->getChunksToRebuild().end();)
+		{
+			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
+			{
+				if ((*chunkIter)->getMesh(y).needsRebuild)
+					createChunkMesh(*chunkIter, y);
+			}
+			chunkIter = world->getChunksToRebuild().erase(chunkIter);
+		}
+	}
+
 	void WorldRenderer::renderWorld(World* world)
 	{
 		glEnable(GL_DEPTH_TEST);
@@ -178,8 +196,8 @@ namespace Bolt
 
 		glm::mat4 translation(1.0f);
 
-		//glBindTexture(GL_TEXTURE_2D_ARRAY, _textureAtlas.textureID);
-		//glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, BlockManager::getInstance().getTexture());
+		glActiveTexture(GL_TEXTURE0);
 
 		for (auto iter = world->getChunkMap().begin(); iter != world->getChunkMap().end(); iter++)
 		{

@@ -1,0 +1,13 @@
+{
+"blockData": {
+  "textureLayers": {
+	"sides": "grass-side.png",
+	"top": "grass-top.png",
+	"bottom": "dirt.png"
+  },
+  "transparency": false,
+  "shouldRender": true,
+  "hasGravity": false,
+  "emitLightLevel": 0
+}
+}

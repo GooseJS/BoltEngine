@@ -19,10 +19,11 @@ namespace Bolt
 	{
 	private:
 		std::vector<Block*> _registeredBlocks;
+
 		std::vector<std::string> _neededTextures;
 		Texture::TextureArray _textureArray;
 
-		void loadBlockTextures(Block* block);
+		void loadBlockData(Block* block);
 	public:
 		BlockManager() {}
 		~BlockManager()
@@ -32,7 +33,7 @@ namespace Bolt
 
 		static BlockManager& getInstance();
 		
-		Block& registerBlock(Block* block);
+		Block& registerBlock(const std::string& module, const std::string& name);
 		void requireTexture(std::string texture);
 
 		void createTexture();
@@ -44,6 +45,8 @@ namespace Bolt
 		inline BlockType& getBlockAs(BlockID id) { return dynamic_cast<BlockType>(getBlock(id)); }
 		template <class BlockType>
 		inline BlockType& getBlockAs(const std::string& name) { return dynamic_cast<BlockType>(getBlock(name)); }
+
+		inline GLuint getTexture() { return _textureArray.textureID; }
 
 		// TODO (Brendan): Is this needed?
 		//template <class BlockType>

@@ -1,5 +1,6 @@
 #include "Chunk.h"
 
+#include "World.h"
 #include "BlockManager.h"
 
 namespace Bolt
@@ -28,6 +29,15 @@ namespace Bolt
 	
 	Block& Chunk::setBlockAt(ChunkBlockPos pos, Block& block)
 	{
-		return _storage[pos.chunkPos.y].setBlockAt(pos.index(), block);
+		Block& prevBlock = _storage[pos.chunkPos.y].setBlockAt(pos.index(), block);
+		if (block.getID() != prevBlock.getID())
+		{
+			if (getMesh(pos.chunkPos.y).initialized)
+			{
+				getMesh(pos.chunkPos.y).needsRebuild = true;
+				_containingWorld->getChunksToRebuild().push_back(this);
+			}
+		}
+		return prevBlock;
 	}
 }

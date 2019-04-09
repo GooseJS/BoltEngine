@@ -1,0 +1,11 @@
+{
+"blockData": {
+  "textureLayers": {
+	"all": "dirt.png"
+  },
+  "transparency": false,
+  "shouldRender": true,
+  "hasGravity": false,
+  "emitLightLevel": 0
+}
+}

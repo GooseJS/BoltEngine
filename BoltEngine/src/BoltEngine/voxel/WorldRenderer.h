@@ -10,17 +10,18 @@
 
 namespace Bolt
 {
-    class WorldRenderer
+    class BOLT_API WorldRenderer
     {
 	private:
 		Camera* _worldRenderCam;
 
 		Shader _worldRenderShader;
-		Texture::TextureArray _textureAtlas;
     public:
 		void initRenderer();
 
         void createChunkMesh(ChunkPtr chunk, int chunkY = -1);
+
+		void buildChunks(World* world);
 
 		void renderWorld(World* world);
 

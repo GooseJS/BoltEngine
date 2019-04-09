@@ -19,29 +19,42 @@ namespace Bolt
 		ALL						= 8
 	};
 
+	struct BlockData
+	{
+		bool transparency = false;
+		bool shouldRender = false;
+
+		int emitLightLevel = 0;
+
+		bool hasGravity = false;
+	};
+
 	class Block
 	{
 	private:
 		friend class BlockManager;
 		
 		BlockID _id;
+		std::string _module = "bolt";
+		std::string _name = "nullptr";
+
+		BlockData _data;
 		Texture::TextureArray::Key _texture[BoltBlockFace::SIZE];
-
-		std::unordered_map<BoltBlockFace, std::string> _faceTextures;
 	public:
-		Block() {}
-
-		const BlockID getID() { return _id; }
-
-		virtual const std::string getName() { return "bolt::nullptr"; };
+		Block(BlockID id, std::string module, std::string name) : _id(id), _module(module), _name(name) {} // TODO(Brendan): I don't want module to be a string, but I can't think of any other good way to represent it right now
 
 		inline operator BlockID() { getID(); }
 
-		virtual Texture::TextureArray::Key getTextureKey(BoltBlockFace face) { return _texture[face]; }
+		const BlockID getID() { return _id; }
+		const std::string getName() const { return _name; };
+		const std::string getModule() const { return _module; }
+		const std::string getFullName() const { return _module + "::" + _name; }
 
-		virtual inline bool hasTransparency() { return false; }
-		virtual inline bool shouldRender() { return false; }
-		virtual inline bool hasGravity() { return false; }
-		virtual inline int getLightLevel() { return 0; }
+		const Texture::TextureArray::Key getTextureKey(BoltBlockFace face) const { return _texture[face]; }
+
+		const bool hasTransparency() const { return _data.transparency; }
+		const bool shouldRender() const { return _data.shouldRender; }
+		const bool hasGravity() const { return _data.hasGravity; }
+		const int emitLightLevel() const { return _data.emitLightLevel; }
 	};
 }

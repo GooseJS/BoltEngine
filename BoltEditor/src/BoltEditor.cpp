@@ -14,30 +14,10 @@ namespace Bolt
 {
 	namespace Editor
 	{
-		class BlockAir : public Block
-		{
-		public:
-			BlockAir() {}
-
-			virtual const std::string getName() override { return "bolt::air"; }
-		};
-		
-		class BlockDirt : public Block
-		{
-		public:
-			BlockDirt() {} // TODO (Brendan): Move BlockNameGen into the block manager and seperate into modules / mods (bolt == base game)
-
-			virtual const std::string getName() override { return "bolt::dirt"; }
-
-			virtual bool shouldRender() override { return true; }
-		};
 
 		class BoltEditor : public BoltApplication
 		{
 		private:
-			BlockAir* AIR_BLOCK;
-			BlockDirt* DIRT_BLOCK;
-
 			World world;
 			WorldRenderer worldRenderer;
 
@@ -55,8 +35,6 @@ namespace Bolt
 
 			virtual void onStartup() override
 			{
-				//shader.initFromFile("shader.vert", "shader.frag");
-
 				EventSystem::getInstance().addListener<EventMouseMove>(BOLT_SUBSCRIBE_EVENT(&BoltEditor::onMouseMove));
 
 				getMainWindow().disableCursor();
@@ -71,15 +49,9 @@ namespace Bolt
 
 				worldRenderer.setWorldRenderCam(&player.getPlayerCamera());
 
-				AIR_BLOCK = dynamic_cast<BlockAir*>(&BlockManager::getInstance().registerBlock(new BlockAir()));
-				DIRT_BLOCK = dynamic_cast<BlockDirt*>(&BlockManager::getInstance().registerBlock(new BlockDirt()));
-
-				BOLT_INFO("Air ID: {} | should render: {}", AIR_BLOCK->getID(), AIR_BLOCK->shouldRender());
-				BOLT_INFO("Dirt ID: {} | should render: {}", DIRT_BLOCK->getID(), DIRT_BLOCK->shouldRender());
-
-
-				world.setBlockAt(BlockPos(32, 75, 36), *DIRT_BLOCK);
-				BOLT_INFO("Block at 10, 10, 10: {}", world.getBlockAt(BlockPos(32, 75, 36)).getName());
+				Block& airBlock = BlockManager::getInstance().registerBlock("bolt", "air");
+				Block& dirtBlock = BlockManager::getInstance().registerBlock("bolt", "dirt");
+				Block& grassBlock = BlockManager::getInstance().registerBlock("bolt", "grass");
 
 				worldRenderer.initRenderer();
 
@@ -90,7 +62,7 @@ namespace Bolt
 						for (int z = 0; z < 16; z++)
 						{
 							if (z % 2 == 0)
-								world.setBlockAt(BlockPos(x, y, z), *DIRT_BLOCK);
+								world.setBlockAt(BlockPos(x, y, z), dirtBlock);
 						}
 					}
 				}
@@ -101,7 +73,7 @@ namespace Bolt
 						for (int z = 0; z < 16; z++)
 						{
 							if (x % 2 == 0)
-								world.setBlockAt(BlockPos(x, y, z), *DIRT_BLOCK);
+								world.setBlockAt(BlockPos(x, y, z), grassBlock);
 						}
 					}
 				}
@@ -113,6 +85,11 @@ namespace Bolt
 			virtual void update() override
 			{
 				updateCamera();
+
+				if (getMainWindow().isKeyPressed(GLFW_KEY_SPACE))
+				{
+					world.setBlockAt(BlockPos(player.getX(), player.getY() - 1, player.getZ()), BlockManager::getInstance().getBlock(0));
+				}
 			}
 			
 			virtual void draw(float updateDistance) override
@@ -128,6 +105,7 @@ namespace Bolt
 				}
 				ImGui::End();
 
+				worldRenderer.buildChunks(&world);
 				worldRenderer.renderWorld(&world);
 
 				static bool demoWindowShown = false;

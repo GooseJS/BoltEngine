@@ -18,6 +18,7 @@ IncludeDir["glm"] = "lib/glm"
 IncludeDir["stb"] = "lib/stb"
 IncludeDir["imgui"] = "lib/imgui"
 IncludeDir["Box2D"] = "lib/Box2D"
+IncludeDir["json"] = "lib/json/include"
 
 include "premake/Box2D"
 include "premake/glfw"
@@ -48,6 +49,7 @@ project "BoltEngine"
 		"%{IncludeDir.stb}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.Box2D}",
+		"%{IncludeDir.json}",
 		"%{prj.name}/src"
 	}
 
@@ -112,6 +114,7 @@ project "BoltEditor"
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.json}",
 		"%{prj.name}/src"
 	}
 

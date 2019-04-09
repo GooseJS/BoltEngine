@@ -72,6 +72,6 @@ namespace Bolt
 
 		if (!initialized)
 			initialized = true;
-		building = false;
+		needsRebuild = false;
 	}
 }
