@@ -18,7 +18,7 @@ namespace Bolt
 		float _pitch = 0.0f;
 		float _fov = 90.0f;
 
-		float _mouseSpeed = 0.05f;
+		float _mouseSpeed = 5.f;
 
 		glm::mat4 _projectionMatrix;
 		glm::mat4 _viewMatrix;

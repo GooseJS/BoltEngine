@@ -10,18 +10,19 @@ namespace Bolt
 			return _lastAccessedChunk;
 
 		ChunkPtr foundChunk;
-		if (_chunkMap.find(pos.value) != _chunkMap.end())
+		auto findChunk = _chunkMap.find(pos.value);
+		if (findChunk != _chunkMap.end())
 		{
-			foundChunk = _chunkMap.at(pos.value)->getChunkAt(pos.y);
+			foundChunk = findChunk->second->getChunkAt(pos.y);
 		}
 		else
 		{
 			ChunkColumn* chunkColumn = DBG_NEW ChunkColumn(this, pos.x, pos.z);
 			foundChunk = chunkColumn->getChunkAt(pos.y);
 			foundChunk->setContainingWorld(this);
+			_lastAccessedChunk = foundChunk;
 			_chunkMap.insert(std::make_pair(pos.value, chunkColumn));
 		}
-		_lastAccessedChunk = foundChunk;
 		return foundChunk;
 	}
 

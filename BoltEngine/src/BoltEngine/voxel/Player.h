@@ -36,7 +36,7 @@ namespace Bolt
 			_y = 20.0f;
 			_z = 0.0f;
 			_playerCamera.setCameraPos(_x, _y, _z);
-			_moveSpeed = 0.0001f;
+			_moveSpeed = 5.0f;
 		}
 
 		void handleMovementInput(const PlayerMovement& movement);
@@ -44,7 +44,8 @@ namespace Bolt
 
 		void checkCollisions(World* world)
 		{
-			std::vector<BlockPos> blockPos = _aabb.getContainingBlockPos();
+			std::vector<BlockPos> blockPos;
+			_aabb.getContainingBlockPos(blockPos);
 			for (auto pos : blockPos)
 			{
 				if (world->getBlockAt(pos).collides())

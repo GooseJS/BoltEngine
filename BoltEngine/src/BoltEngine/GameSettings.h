@@ -17,7 +17,7 @@ namespace Bolt
 		double _lastFrameTime = 0;
 		double _currentTime =  0;
 	public:
-		BoltTime() { _currentTime = glfwGetTime() * 1000; _deltaTime = _currentTime; _lastFrameTime = _currentTime; }
+		BoltTime() { _currentTime = glfwGetTime(); _deltaTime = _currentTime; _lastFrameTime = _currentTime; }
 
 		double getLastFrameTime() const { return _lastFrameTime; }
 		double getCurrentTime() const { return _currentTime; }
@@ -25,7 +25,7 @@ namespace Bolt
 
 		inline void newFrame()
 		{
-			_currentTime = glfwGetTime() * 1000;
+			_currentTime = glfwGetTime();
 			_deltaTime = _currentTime - _lastFrameTime;
 			_lastFrameTime = _currentTime;
 		}

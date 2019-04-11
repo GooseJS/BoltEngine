@@ -31,7 +31,7 @@ namespace Bolt
 			_z = pos.z;
 		}
 
-		_aabb.setPos(_x + (0.75f / 2.f), _y, _z + (0.75f / 2.f));
+		_aabb.setPos(_x + (0.75f / 2.f), _y - (1.75f), _z + (0.75f / 2.f));
 	}
 
 	void Player::handleRotationInput(const float rotX, const float rotY)

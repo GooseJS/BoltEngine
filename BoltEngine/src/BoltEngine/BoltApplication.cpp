@@ -16,7 +16,7 @@ namespace Bolt
 
 		onStartup();
 
-		double millisPerUpdate = 1 / 20.0f;
+		double secondsPerUpdate = 1.0 / 20.0;
 
 		double lag = 0.0f;
 		BOLT_ENGINE_INFO("Starting main loop.");
@@ -27,13 +27,18 @@ namespace Bolt
 
 			_mainWindow.updateWindow();
 
-			while (lag >= millisPerUpdate)
+			//while (lag >= secondsPerUpdate)
+			//{
+			//	update();
+			//	lag -= secondsPerUpdate;
+			//} TODO(Brendan): Make a working game loop!!!
+			if (lag >= secondsPerUpdate)
 			{
 				update();
-				lag -= millisPerUpdate;
+				lag -= secondsPerUpdate;
 			}
 
-			draw(lag / millisPerUpdate);
+			draw(lag / secondsPerUpdate);
 			_mainWindow.swapBuffers();
 		}
 

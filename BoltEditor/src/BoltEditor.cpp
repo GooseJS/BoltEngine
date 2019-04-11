@@ -80,8 +80,6 @@ namespace Bolt
 
 			virtual void update() override
 			{
-				updateCamera();
-
 				if (getMainWindow().isKeyPressed(GLFW_KEY_SPACE))
 				{
 					world.setBlockAt(BlockPos(player.getX(), player.getY() - 1, player.getZ()), BlockManager::getInstance().getBlock(0));
@@ -96,6 +94,8 @@ namespace Bolt
 			virtual void draw(float updateDistance) override
 			{
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				updateCamera();
 
 				Bolt::BoltImGui::getInstance().newFrame();
 

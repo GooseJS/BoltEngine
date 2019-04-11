@@ -28,7 +28,7 @@ namespace Bolt
 			_z = z;
 		}
 
-		inline std::vector<BlockPos> getContainingBlockPos()
+		inline void getContainingBlockPos(std::vector<BlockPos>& fillVector)
 		{
 			bool xNeg = _x < 0;
 			bool yNeg = _y < 0;
@@ -39,15 +39,13 @@ namespace Bolt
 			if (zNeg) _z = abs(_z);
 
 			int minX = floorf(_x);
-			int maxX = ceilf(_x + _width);
+			int maxX = floorf(_x + _width);
 
 			int minY = floorf(_y);
-			int maxY = ceilf(_y + _height);
+			int maxY = floor(_y + _height);
 
 			int minZ = floorf(_z);
-			int maxZ = ceilf(_z + _depth);
-
-			std::vector<BlockPos> retVal;
+			int maxZ = floor(_z + _depth);
 
 			for (int x = minX; x <= maxX; x++)
 			{
@@ -55,12 +53,10 @@ namespace Bolt
 				{
 					for (int z = minZ; z <= maxZ; z++)
 					{
-						retVal.emplace_back(xNeg ? -x : x, yNeg ? -y : y, zNeg ? -z : z);
+						fillVector.emplace_back(BlockPos(x, y, z));
 					}
 				}
 			}
-
-			return retVal;
 		}
 	};
 }
