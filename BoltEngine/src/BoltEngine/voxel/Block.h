@@ -27,6 +27,7 @@ namespace Bolt
 		int emitLightLevel = 0;
 
 		bool hasGravity = false;
+		bool collides = false;
 	};
 
 	class Block
@@ -55,6 +56,7 @@ namespace Bolt
 		const bool hasTransparency() const { return _data.transparency; }
 		const bool shouldRender() const { return _data.shouldRender; }
 		const bool hasGravity() const { return _data.hasGravity; }
+		const bool collides() const { return _data.collides; }
 		const int emitLightLevel() const { return _data.emitLightLevel; }
 	};
 }

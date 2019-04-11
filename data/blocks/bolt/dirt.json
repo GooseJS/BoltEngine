@@ -6,6 +6,7 @@
   "transparency": false,
   "shouldRender": true,
   "hasGravity": false,
-  "emitLightLevel": 0
+  "emitLightLevel": 0,
+  "collides":  true
 }
 }

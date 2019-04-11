@@ -90,6 +90,8 @@ namespace Bolt
 				block->_data.emitLightLevel = blockDataValue;
 			else if (blockDataKey == "hasGravity")
 				block->_data.hasGravity = blockDataValue;
+			else if (blockDataKey == "collides")
+				block->_data.collides = blockDataValue;
 		}
 	}
 
@@ -105,27 +107,31 @@ namespace Bolt
 
 	Block& BlockManager::registerBlock(const std::string& module, const std::string& name)
 	{
-		BlockID blockID = _registeredBlocks.size();
-		_registeredBlocks.emplace_back(new Block(blockID, module, name));
-		Block& block = *_registeredBlocks.at(blockID);
-		loadBlockData(&block);
-		return block;
+		BlockID blockID = _lastRegisteredBlock + 1;
+		if (blockID >= BOLT_MAX_BLOCK_COUNT)
+			BOLT_CRITICAL("Max block count reached! Can no longer register new blocks."); // TODO(Brendan): This should crash or do something. I mean it's going to crash anyway but still
+		else
+			_lastRegisteredBlock++;
+		Block* block = DBG_NEW Block(blockID, module, name);
+		_registeredBlocks[blockID] = block;
+		loadBlockData(block);
+		return *block;
 	}
 
 	Block& BlockManager::getBlock(BlockID id)
 	{
-		if (_registeredBlocks.size() > id)
-			return (*_registeredBlocks.at(id));
+		if (id <= _lastRegisteredBlock)
+			return (*_registeredBlocks[id]);
 		else
 		{
-			return (*_registeredBlocks.at(0));
-			BOLT_ENGINE_ERROR("Cannot find block at id {}, max id is {}", id, _registeredBlocks.size());
+			return (*_registeredBlocks[0]);
+			BOLT_ENGINE_ERROR("Cannot find block at id {}, max id is {}", id, _lastRegisteredBlock);
 		}
 	}
 
 	Block& BlockManager::getBlock(const std::string& name)
 	{
 		// TODO (Brendan): This needs to be implemented
-		return (*_registeredBlocks.at(0));
+		return (*_registeredBlocks[0]);
 	}
 }

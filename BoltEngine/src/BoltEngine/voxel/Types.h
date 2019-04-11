@@ -57,6 +57,11 @@ namespace Bolt
 			z = blockPos.z >> 4;
 		}
 
+		bool operator==(ChunkPos& pos)
+		{
+			return x == pos.x && y == pos.y && z == pos.z;
+		}
+
         BlockPos toBlockPos(int x, int y, int z);
 	};
 

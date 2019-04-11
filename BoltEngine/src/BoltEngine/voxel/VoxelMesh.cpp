@@ -4,21 +4,10 @@ namespace Bolt
 {
     unsigned int BoltChunkMesh::addVertexToMesh(glm::vec3 position, glm::vec3 normal, glm::vec3 texCoord)
     {
-		BoltChunkMeshVertex newVertex;
+		if (_vertices.size() == 0)
+			_vertices.reserve(4096);
 
-        newVertex.vertexPosition[0] = position.x;
-        newVertex.vertexPosition[1] = position.y;
-        newVertex.vertexPosition[2] = position.z;
-
-        newVertex.vertexNormal[0] = normal.x;
-        newVertex.vertexNormal[1] = normal.y;
-        newVertex.vertexNormal[2] = normal.z;
-
-		newVertex.texCoord[0] = texCoord.x;
-		newVertex.texCoord[1] = texCoord.y;
-		newVertex.texCoord[2] = texCoord.z;
-
-        _vertices.push_back(newVertex);
+        _vertices.emplace_back(position, normal, texCoord);
 
         unsigned int vertexID = (int)_vertices.size() - 1;
         return vertexID;

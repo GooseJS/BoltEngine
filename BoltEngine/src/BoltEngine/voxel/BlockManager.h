@@ -5,6 +5,8 @@
 #include "BoltEngine/Core.h"
 #include "BoltEngine/voxel/Block.h"
 
+#define BOLT_MAX_BLOCK_COUNT 256
+
 namespace Bolt
 {
 	// TODO (Brendan): Block manager should completely handle the lifecycle of blocks in memory.
@@ -18,17 +20,26 @@ namespace Bolt
 	class BOLT_API BlockManager
 	{
 	private:
-		std::vector<Block*> _registeredBlocks;
+		Block** _registeredBlocks;
+		BlockID _lastRegisteredBlock = -1;
 
 		std::vector<std::string> _neededTextures;
 		Texture::TextureArray _textureArray;
 
 		void loadBlockData(Block* block);
+
+		BlockManager()
+		{
+			_registeredBlocks = DBG_NEW Block*[BOLT_MAX_BLOCK_COUNT];
+		}
 	public:
-		BlockManager() {}
 		~BlockManager()
 		{
-
+			for (int i = 0; i <= _lastRegisteredBlock; i++)
+			{
+				delete _registeredBlocks[i];
+			}
+			delete[] _registeredBlocks;
 		}
 
 		static BlockManager& getInstance();
@@ -41,10 +52,10 @@ namespace Bolt
 		Block& getBlock(BlockID id);
 		Block& getBlock(const std::string& name);
 
-		template <class BlockType>
-		inline BlockType& getBlockAs(BlockID id) { return dynamic_cast<BlockType>(getBlock(id)); }
-		template <class BlockType>
-		inline BlockType& getBlockAs(const std::string& name) { return dynamic_cast<BlockType>(getBlock(name)); }
+		//template <class BlockType>
+		//inline BlockType& getBlockAs(BlockID id) { return dynamic_cast<BlockType>(getBlock(id)); }
+		//template <class BlockType>
+		//inline BlockType& getBlockAs(const std::string& name) { return dynamic_cast<BlockType>(getBlock(name)); }
 
 		inline GLuint getTexture() { return _textureArray.textureID; }
 

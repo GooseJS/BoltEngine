@@ -16,13 +16,23 @@ namespace Bolt
 	class World
 	{
 	private:
-		std::mutex _chunkMapMutex;
 		ChunkMap _chunkMap;
+		ChunkPtr _lastAccessedChunk = nullptr;
 
 		std::mutex _rebuildChunkMutex;
 		ChunkList _rebuildChunks;
 		ChunkList _uploadChunks;
 	public:
+		World() {}
+		~World()
+		{
+			for (auto chunkColumnPair : _chunkMap)
+			{
+				delete chunkColumnPair.second;
+			}
+			_chunkMap.clear();
+		}
+
 		ChunkPtr getChunkAt(ChunkPos pos);
 
 		Block& getBlockAt(BlockPos pos);

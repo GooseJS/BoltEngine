@@ -6,6 +6,9 @@ namespace Bolt
 {
 	ChunkPtr World::getChunkAt(ChunkPos pos)
 	{
+		if (_lastAccessedChunk != nullptr && _lastAccessedChunk->getPos() == pos)
+			return _lastAccessedChunk;
+
 		ChunkPtr foundChunk;
 		if (_chunkMap.find(pos.value) != _chunkMap.end())
 		{
@@ -13,11 +16,12 @@ namespace Bolt
 		}
 		else
 		{
-			ChunkColumn* chunkColumn = new ChunkColumn(this, pos.x, pos.z);
+			ChunkColumn* chunkColumn = DBG_NEW ChunkColumn(this, pos.x, pos.z);
 			foundChunk = chunkColumn->getChunkAt(pos.y);
 			foundChunk->setContainingWorld(this);
 			_chunkMap.insert(std::make_pair(pos.value, chunkColumn));
 		}
+		_lastAccessedChunk = foundChunk;
 		return foundChunk;
 	}
 

@@ -1,3 +1,7 @@
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
+
 #include <Bolt.h>
 #include <BoltEngine/GL.h>
 #include <BoltEngine/voxel/Block.h>
@@ -82,6 +86,11 @@ namespace Bolt
 				{
 					world.setBlockAt(BlockPos(player.getX(), player.getY() - 1, player.getZ()), BlockManager::getInstance().getBlock(0));
 				}
+
+				if (getMainWindow().isKeyPressed(GLFW_KEY_Q))
+					getMainWindow().setShouldClose();
+
+				player.checkCollisions(&world);
 			}
 			
 			virtual void draw(float updateDistance) override
@@ -138,6 +147,7 @@ namespace Bolt
 
 int main()
 {
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	Bolt::Editor::BoltEditor editor;
 	editor.main();
 }

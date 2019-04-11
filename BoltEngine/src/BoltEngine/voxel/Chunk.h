@@ -73,6 +73,10 @@ namespace Bolt
 
 	public:
 		Chunk(ChunkPos pos);
+		~Chunk()
+		{
+			if (_mesh != nullptr) delete _mesh;
+		}
 
 		Block& getBlockAt(ChunkBlockPos pos);
 		Block& setBlockAt(ChunkBlockPos pos, const Block& block);
@@ -99,9 +103,18 @@ namespace Bolt
 			_chunks = (ChunkPtr*)malloc(sizeof(ChunkPtr) * BOLT_WORLD_HEIGHT);
 			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
 			{
-				_chunks[y] = new Chunk(ChunkPos(x, y, z)); // TODO(Brendan): Look into placement new
+				_chunks[y] = DBG_NEW Chunk(ChunkPos(x, y, z)); // TODO(Brendan): Look into placement new
 				_chunks[y]->setContainingWorld(containingWorld);
 			}
+		}
+
+		~ChunkColumn()
+		{
+			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
+			{
+				if (_chunks[y] != nullptr) delete _chunks[y];
+			}
+			free(_chunks);
 		}
 
 		inline Block& getBlockAt(ChunkBlockPos pos) { return _chunks[pos.chunkPos.y]->getBlockAt(pos); }
