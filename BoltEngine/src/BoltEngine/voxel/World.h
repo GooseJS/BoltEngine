@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <unordered_map>
 
@@ -8,16 +10,18 @@
 
 namespace Bolt
 {
-	typedef Chunk* ChunkPtr;
 	typedef std::vector<ChunkPtr> ChunkList;
-	typedef std::unordered_map<uint64_t, ChunkPtr> ChunkMap;
+	typedef std::unordered_map<uint64_t, ChunkColumn*> ChunkMap;
 
 	class World
 	{
 	private:
+		std::mutex _chunkMapMutex;
 		ChunkMap _chunkMap;
 
+		std::mutex _rebuildChunkMutex;
 		ChunkList _rebuildChunks;
+		ChunkList _uploadChunks;
 	public:
 		ChunkPtr getChunkAt(ChunkPos pos);
 
@@ -26,5 +30,8 @@ namespace Bolt
 
 		inline ChunkMap& getChunkMap() { return _chunkMap; }
 		inline ChunkList& getChunksToRebuild() { return _rebuildChunks; }
+		inline ChunkList& getChunksToUpload() { return _uploadChunks; }
+
+		inline ChunkList copyChunksToRebuild() { return std::vector(_rebuildChunks); }
 	};
 }

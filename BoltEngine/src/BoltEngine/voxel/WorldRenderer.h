@@ -1,5 +1,7 @@
 #pragma once
 
+#include <thread>
+#include <future>
 #include <glm/glm.hpp>
 
 #include "Chunk.h"
@@ -13,15 +15,20 @@ namespace Bolt
     class BOLT_API WorldRenderer
     {
 	private:
+		const int maxChunkGenerationThreads = 8;
+
+	private:
+		std::vector<std::future<ChunkPtr>> _chunkGenerationThreads;
+
 		Camera* _worldRenderCam;
 
 		Shader _worldRenderShader;
     public:
 		void initRenderer();
 
-        void createChunkMesh(ChunkPtr chunk, int chunkY = -1);
+        void createChunkMesh(ChunkPtr chunk);
 
-		void buildChunks(World* world);
+		void checkForRebuildChunks(World* world);
 
 		void renderWorld(World* world);
 

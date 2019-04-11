@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoltEngine/voxel/World.h"
 #include "BoltEngine/render/Camera.h"
 
 namespace Bolt
@@ -35,6 +36,13 @@ namespace Bolt
 
 		void handleMovementInput(const PlayerMovement& movement);
 		void handleRotationInput(const float rotX, const float rotY);
+
+		void checkCollisions(World* world)
+		{
+			int xRounded = (int)_x;
+			if (_x - (float)xRounded > 0.75f) // Bigger than 1/3 third block (i.e player is intersecting with 1/3 of block)
+				return;
+		}
 
 		float getX() { return _x; }
 		float getY() { return _y; }

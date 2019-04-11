@@ -9,6 +9,7 @@
 #include <BoltEngine/voxel/WorldRenderer.h>
 #include <BoltEngine/event/EventSystem.h>
 #include <BoltEngine/voxel/Player.h>
+#include <BoltEngine/util/BoltProfiler.h>
 
 namespace Bolt
 {
@@ -61,25 +62,16 @@ namespace Bolt
 					{
 						for (int z = 0; z < 16; z++)
 						{
-							if (z % 2 == 0)
-								world.setBlockAt(BlockPos(x, y, z), dirtBlock);
-						}
-					}
-				}
-				for (int x = 0; x < 16; x++)
-				{
-					for (int y = 16; y < 32; y++)
-					{
-						for (int z = 0; z < 16; z++)
-						{
-							if (x % 2 == 0)
+							if (y < 10)
 								world.setBlockAt(BlockPos(x, y, z), grassBlock);
 						}
 					}
 				}
 
 				worldRenderer.createChunkMesh(world.getChunkAt(BlockPos(5, 5, 5)));
+				world.getChunkAt(BlockPos(5, 5, 5))->getMesh().uploadMesh();
 				worldRenderer.createChunkMesh(world.getChunkAt(BlockPos(32, 75, 36)));
+				world.getChunkAt(BlockPos(375, 5, 36))->getMesh().uploadMesh();
 			}
 
 			virtual void update() override
@@ -102,16 +94,19 @@ namespace Bolt
 				{
 					ImGui::Text("Player X: %.2f", player.getX());
 					ImGui::Text("Player Z: %.2f", player.getZ());
+					ImGui::Text("Chunk Rebuild Queue Size: %i", world.getChunksToRebuild().size());
 				}
 				ImGui::End();
 
-				worldRenderer.buildChunks(&world);
+				worldRenderer.checkForRebuildChunks(&world);
 				worldRenderer.renderWorld(&world);
 
 				static bool demoWindowShown = false;
 				//ImGui::ShowDemoWindow(&demoWindowShown);
 
-				Bolt::BoltImGui::getInstance().render();			
+				Bolt::BoltImGui::getInstance().render();
+
+				//Bolt::BoltProfiler::getInstance().newFrame();
 			}
 
 			virtual void onShutdown() override

@@ -45,7 +45,7 @@ namespace Bolt
 
 		inline operator BlockID() { getID(); }
 
-		const BlockID getID() { return _id; }
+		const BlockID getID() const { return _id; }
 		const std::string getName() const { return _name; };
 		const std::string getModule() const { return _module; }
 		const std::string getFullName() const { return _module + "::" + _name; }

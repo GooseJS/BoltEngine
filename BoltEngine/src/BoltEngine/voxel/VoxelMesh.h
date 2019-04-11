@@ -24,6 +24,7 @@ namespace Bolt
 		std::vector<BoltChunkMeshTriangle> _triangles;
 		std::vector<BoltChunkMeshVertex> _vertices;
 	public:		
+		bool building = false;
 		bool needsRebuild = true;
 		bool initialized = false;
 

@@ -18,7 +18,7 @@ namespace Bolt
 		newVertex.texCoord[1] = texCoord.y;
 		newVertex.texCoord[2] = texCoord.z;
 
-        _vertices.push_back(std::move(newVertex));
+        _vertices.push_back(newVertex);
 
         unsigned int vertexID = (int)_vertices.size() - 1;
         return vertexID;
