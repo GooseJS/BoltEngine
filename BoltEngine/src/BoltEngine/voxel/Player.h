@@ -27,10 +27,10 @@ namespace Bolt
 
 		Camera _playerCamera;
 
-		AABB _aabb;
-		bool _colliding = false;
+		AABB _feetAABB;
+		bool _onGround = false;
 	public:
-		Player() : _aabb(0.75f, 2.0f, 0.75f)
+		Player() : _feetAABB(0.75f, 0.0f, 0.75f)
 		{
 			_x = 0.0f;
 			_y = 20.0f;
@@ -42,20 +42,23 @@ namespace Bolt
 		void handleMovementInput(const PlayerMovement& movement);
 		void handleRotationInput(const float rotX, const float rotY);
 
-		void checkCollisions(World* world)
+		inline void checkCollisions(World* world)
 		{
-			std::vector<BlockPos> blockPos;
-			_aabb.getContainingBlockPos(blockPos);
-			for (auto pos : blockPos)
+			BlockPosList& list = _feetAABB.getContainingBlockPos();
+			if (list.size() > 0)
 			{
-				if (world->getBlockAt(pos).collides())
+				for (auto pos = list.begin(); pos != list.end(); pos++)
 				{
-					_colliding = true;
-					return;
+					if (world->getBlockAt(*pos).collides())
+					{
+						_onGround = true;
+						return;
+					}
 				}
-			}
 
-			_colliding = false;
+				
+			}
+			_onGround = false;
 		}
 
 		float getX() { return _x; }

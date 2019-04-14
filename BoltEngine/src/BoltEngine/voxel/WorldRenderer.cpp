@@ -242,7 +242,7 @@ namespace Bolt
 		_worldRenderShader.use();
 
 		glUniformMatrix4fv(_worldRenderShader.uniform("projectionViewMatrix"), 1, GL_FALSE, &transformedMatrix[0][0]);
-		glUniform3f(_worldRenderShader.uniform("lightPos"), 0.0f, 64.f, 0.0f);
+		//glUniform3f(_worldRenderShader.uniform("lightPos"), 0.0f, 64.f, 0.0f);
 
 		glm::mat4 translation(1.0f);
 

@@ -85,7 +85,7 @@ namespace Bolt
 					world.setBlockAt(BlockPos(player.getX(), player.getY() - 1, player.getZ()), BlockManager::getInstance().getBlock(0));
 				}
 
-				if (getMainWindow().isKeyPressed(GLFW_KEY_Q))
+				if (getMainWindow().isKeyPressed(GLFW_KEY_T))
 					getMainWindow().setShouldClose();
 
 				player.checkCollisions(&world);
