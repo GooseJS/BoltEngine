@@ -45,6 +45,7 @@ namespace Bolt
 		inline void checkCollisions(World* world)
 		{
 			BlockPosList& list = _feetAABB.getContainingBlockPos();
+			_onGround = false;
 			if (list.size() > 0)
 			{
 				for (auto pos = list.begin(); pos != list.end(); pos++)
@@ -55,10 +56,7 @@ namespace Bolt
 						return;
 					}
 				}
-
-				
 			}
-			_onGround = false;
 		}
 
 		float getX() { return _x; }
