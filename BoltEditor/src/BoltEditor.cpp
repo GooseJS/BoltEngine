@@ -14,6 +14,7 @@
 #include <BoltEngine/event/EventSystem.h>
 #include <BoltEngine/voxel/Player.h>
 #include <BoltEngine/util/BoltProfiler.h>
+#include <BoltEngine/render/DebugRenderer.h>
 
 namespace Bolt
 {
@@ -31,7 +32,9 @@ namespace Bolt
 			GLuint vaoID;
 			GLuint elementArrayID;
 			GLuint indexArrayID;
-			Shader shader;
+			Shader shader; 
+
+			BoltDebugDrawInterface debugRenderer;
 		public:
 			BoltEditor()
 			{
@@ -40,6 +43,10 @@ namespace Bolt
 
 			virtual void onStartup() override
 			{
+				debugRenderer.setup();
+				debugRenderer.setRenderCam(&player.getPlayerCamera());
+				dd::initialize(&debugRenderer);
+
 				EventSystem::getInstance().addListener<EventMouseMove>(BOLT_SUBSCRIBE_EVENT(&BoltEditor::onMouseMove));
 
 				getMainWindow().disableCursor();
@@ -80,9 +87,9 @@ namespace Bolt
 
 			virtual void update() override
 			{
-				if (getMainWindow().isKeyPressed(GLFW_KEY_SPACE))
+				if (getMainWindow().isKeyPressed(GLFW_KEY_X))
 				{
-					world.setBlockAt(BlockPos(player.getX(), player.getY() - 1, player.getZ()), BlockManager::getInstance().getBlock(0));
+					world.setBlockAt(BlockPos(player.getX(), player.getY(), player.getZ()), BlockManager::getInstance().getBlock(0));
 				}
 
 				if (getMainWindow().isKeyPressed(GLFW_KEY_T))
@@ -102,13 +109,17 @@ namespace Bolt
 				ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 				{
 					ImGui::Text("Player X: %.2f", player.getX());
+					ImGui::Text("Player Y: %.2f", player.getY());
 					ImGui::Text("Player Z: %.2f", player.getZ());
-					ImGui::Text("Chunk Rebuild Queue Size: %i", world.getChunksToRebuild().size());
 				}
 				ImGui::End();
 
+				player.updatePos();
+
 				worldRenderer.checkForRebuildChunks(&world);
 				worldRenderer.renderWorld(&world);
+
+				player.debugDraw();
 
 				static bool demoWindowShown = false;
 				//ImGui::ShowDemoWindow(&demoWindowShown);
@@ -116,6 +127,8 @@ namespace Bolt
 				Bolt::BoltImGui::getInstance().render();
 
 				//Bolt::BoltProfiler::getInstance().newFrame();
+
+				dd::flush();
 			}
 
 			virtual void onShutdown() override
@@ -138,6 +151,7 @@ namespace Bolt
 				playerMovement.moveRightPressed = getMainWindow().isKeyPressed(GLFW_KEY_D);
 				playerMovement.moveUpPressed = getMainWindow().isKeyPressed(GLFW_KEY_Q);
 				playerMovement.moveDownPressed = getMainWindow().isKeyPressed(GLFW_KEY_Z);
+				playerMovement.jumpPressed = getMainWindow().isKeyPressed(GLFW_KEY_SPACE);
 
 				player.handleMovementInput(playerMovement);
 			}

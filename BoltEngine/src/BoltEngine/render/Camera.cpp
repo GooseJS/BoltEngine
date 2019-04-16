@@ -2,6 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "BoltEngine/logger/Logger.h"
 #include "BoltEngine/window/Window.h"
 #include "BoltEngine/GameSettings.h"
 
@@ -19,6 +20,7 @@ namespace Bolt
 	void Camera::generateMatrices()
 	{
 		_direction = glm::normalize(glm::vec3(cos(glm::radians(_pitch)) * cos(glm::radians(_yaw)), sin(glm::radians(_pitch)), cos(glm::radians(_pitch)) * sin(glm::radians(_yaw))));
+		_forward = glm::normalize(glm::vec3(cos(glm::radians(_yaw)), 0, sin(glm::radians(_yaw))));
 		_right = glm::normalize(glm::cross(_worldUp, _direction));
 		_up = glm::normalize(glm::cross(_direction, _right));
 
@@ -41,9 +43,9 @@ namespace Bolt
 
 	void Camera::moveCamera(float forwardBack, float strafe, float upDown)
 	{
-		_position += _direction * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * forwardBack;
+		_position += _forward * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * forwardBack;
 		_position -= _right * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * strafe;
-		_position += _up * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * upDown;
+		_position += _worldUp * Bolt::GameSettings::getInstance().getGameTime().getDeltaTime() * upDown;
 	}
 
 	void Camera::setCameraPos(float x, float y, float z)

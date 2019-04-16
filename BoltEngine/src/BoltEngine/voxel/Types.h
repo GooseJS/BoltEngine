@@ -1,6 +1,8 @@
 #pragma once
 
+#include "BoltEngine/Core.h"
 #include <cstdint>
+#include <vector>
 
 #ifndef BOLT_CHUNK_WIDTH
 #define BOLT_CHUNK_WIDTH 16
@@ -19,8 +21,6 @@
 
 namespace Bolt
 {
-
-
 	struct BlockPos
 	{
 		int x;
@@ -89,4 +89,6 @@ namespace Bolt
 			return x | y << 4 | z << 8;
 		}
 	};
+
+	typedef std::vector<BlockPos> BlockPosList;
 }

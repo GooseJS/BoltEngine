@@ -16,9 +16,9 @@ namespace Bolt
 
 		onStartup();
 
-		double secondsPerUpdate = 1.0 / 20.0;
+		float secondsPerUpdate = 1.0f / 60.0f;
 
-		double lag = 0.0f;
+		float lag = 0.0f;
 		BOLT_ENGINE_INFO("Starting main loop.");
 		while (!_mainWindow.shouldClose())
 		{
@@ -27,16 +27,16 @@ namespace Bolt
 
 			_mainWindow.updateWindow();
 
-			//while (lag >= secondsPerUpdate)
-			//{
-			//	update();
-			//	lag -= secondsPerUpdate;
-			//} TODO(Brendan): Make a working game loop!!!
-			if (lag >= secondsPerUpdate)
+			while (lag >= secondsPerUpdate)
 			{
 				update();
 				lag -= secondsPerUpdate;
-			}
+			} //TODO(Brendan): Make a working game loop!!!
+			//if (lag >= secondsPerUpdate)
+			//{
+			//	update();
+			//	lag -= secondsPerUpdate;
+			//}
 
 			draw(lag / secondsPerUpdate);
 			_mainWindow.swapBuffers();

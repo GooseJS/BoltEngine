@@ -9,6 +9,7 @@ namespace Bolt
 	private:
 		glm::vec3 _position = glm::vec3(0.0f);
 		glm::vec3 _direction = glm::vec3(0.0f);
+		glm::vec3 _forward = glm::vec3(0.0f);
 		glm::vec3 _right = glm::vec3(0.0f);
 		glm::vec3 _up = glm::vec3(0.0f);
 
@@ -39,8 +40,13 @@ namespace Bolt
 		void moveCamera(float forwardBack, float strafe, float upDown);
 		void setCameraPos(float x, float y, float z);
 
-		inline glm::vec3 getPosition() { return _position; }
+		inline void setCameraPos(const glm::vec3& pos) { _position = pos; }
+
+		inline glm::vec3 getPosition() const { return _position; }
+		inline glm::vec3 getFacing() const { return _direction; }
+		inline glm::vec3 getForward() const { return _forward; }
+		inline glm::vec3 getRight() const { return _right; }
 		inline glm::mat4 getViewMatrix() { return _viewMatrix; }
-		inline glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
+		inline glm::mat4 getProjectionMatrix() const { return _projectionMatrix; }
 	};
 }

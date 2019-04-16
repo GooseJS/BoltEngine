@@ -4,71 +4,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include "BoltEngine/render/DebugRenderer.h"
 #include "BoltEngine/voxel/Types.h"
 
 namespace Bolt
 {
-	class BOLT_API BlockPosList
-	{
-	private:
-		int _size;
-		BlockPos* _first;
-	public:
-		class BlockPosIter
-		{
-		public:
-			typedef BlockPosIter SelfType;
-			typedef BlockPos ValueType;
-			typedef BlockPos& RefType;
-			typedef BlockPos* PointerType;
-			typedef std::forward_iterator_tag IteratorCategory;
-			typedef int DifferenceType;
-
-			BlockPosIter(PointerType ptr) : _ptr(ptr) {}
-			SelfType operator++() { _ptr++; return *this; }
-			SelfType operator++(int i) { _ptr++; return *this; }
-			RefType operator*() { return *_ptr; }
-			PointerType operator->() { return _ptr; }
-			bool operator==(const SelfType& other) { return _ptr == other._ptr; }
-			bool operator!=(const SelfType& other) { return _ptr != other._ptr; }
-
-		private:
-			PointerType _ptr;
-		};
-
-		BlockPosList(int size) : _size(size)
-		{
-			_first = (BlockPos*)malloc(sizeof(BlockPos) * _size);
-		}
-
-		~BlockPosList()
-		{
-			free(_first);
-		}
-
-		int size() const
-		{
-			return _size;
-		}
-
-		BlockPos& operator[](int index)
-		{
-			assert(index < _size); // TODO(Brendan): Better error checking!
-			return _first[index];
-		}
-
-		BlockPosIter begin()
-		{
-			return BlockPosIter(_first);
-		}
-
-		BlockPosIter end()
-		{
-			return BlockPosIter(_first + _size);
-		}
-
-	};
-
 	class BOLT_API AABB
 	{
 		float _x = 0.0f;
@@ -90,13 +30,23 @@ namespace Bolt
 			_x = x;
 			_y = y;
 			_z = z;
+
+			_moved = true;
+		}
+
+		inline void setCenter(float x, float y, float z)
+		{
+			_x = x - (_width / 2.f);
+			_y = y - (_height / 2.f);
+			_z = z - (_depth / 2.f);
+
+			_moved = true;
 		}
 
 		inline BlockPosList& getContainingBlockPos()
 		{
 			if (_moved)
 			{
-
 				bool xNeg = _x < 0;
 				bool yNeg = _y < 0;
 				bool zNeg = _z < 0;
@@ -119,7 +69,10 @@ namespace Bolt
 				if (maxY - minY == 0) numIter--;
 				if (maxZ - minZ == 0) numIter--;
 
-				_containingPos = BlockPosList(((maxX - minX) * numIter) + ((maxY - minY) * numIter) + ((maxZ - minZ) * numIter));
+				int size = ((maxX - minX) * numIter) + ((maxY - minY) * numIter) + ((maxZ - minZ) * numIter);
+
+				_containingPos.clear();
+				_containingPos.reserve(size);
 
 				auto iter = _containingPos.begin();
 				for (int x = minX; x <= maxX; x++)
@@ -128,17 +81,23 @@ namespace Bolt
 					{
 						for (int z = minZ; z <= maxZ; z++)
 						{
-							BlockPos& pos = *iter;
-							pos.x = x;
-							pos.y = y;
-							pos.z = z;
-							if (iter != _containingPos.end()) iter++;
+							_containingPos.emplace_back(xNeg ? -x : x, yNeg ? -y : y, zNeg ? -z : z);
 						}
 					}
 				}
+
+				_moved = false;
 			}
 
 			return _containingPos;
+		}
+
+		inline void debugDraw()
+		{
+			ddVec3 origin	= { _x, _y, _z };
+			ddVec3 max		= { _x + _width, _y + _height, _z + _depth };
+
+			dd::aabb(origin, max, dd::colors::Blue);
 		}
 	};
 }

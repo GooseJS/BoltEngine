@@ -189,6 +189,12 @@ namespace Bolt
 				BOLT_ENGINE_CRITICAL("Program must be initialized before being used.");
 		}
 
+		inline void bindAttribLocation(GLuint location, std::string name)
+		{
+			if (_init)
+				glBindAttribLocation(_programID, location, name.c_str());
+		}
+
 		GLuint attribute(std::string attribName)
 		{
 			auto iter = _attributeMap.find(attribName);
