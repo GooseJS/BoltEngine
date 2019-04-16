@@ -22,3 +22,6 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json.git
+[submodule "lib/debug-draw"]
+	path = lib/debug-draw
+	url = https://github.com/glampert/debug-draw.git
