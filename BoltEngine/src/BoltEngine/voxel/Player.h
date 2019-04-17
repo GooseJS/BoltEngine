@@ -48,6 +48,8 @@ namespace Bolt
 		bool collidingPZ = false;
 		bool collidingNX = false;
 		bool collidingPX = false;
+
+		bool _jumping = false;
 	};
 
 	class Player
@@ -63,8 +65,6 @@ namespace Bolt
 		PlayerCapabilities _playerCapabilities;
 		PlayerData _playerData;
 
-		bool _jumping = false;
-
 		float _playerCenter = 0.75f / 2.0f;
 	public:
 		Player()
@@ -75,8 +75,10 @@ namespace Bolt
 
 		void handleMovementInput(const PlayerMovement& movement);
 		void handleRotationInput(const float rotX, const float rotY);
+		void jump();
 
 		void updatePos();
+		void updatePhysics();
 
 		void checkCollisions(World* world);
 

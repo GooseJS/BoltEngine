@@ -16,7 +16,7 @@ namespace Bolt
 
 		onStartup();
 
-		float secondsPerUpdate = 1.0f / 60.0f;
+		float secondsPerUpdate = 1.0f / 160.0f;
 
 		float lag = 0.0f;
 		BOLT_ENGINE_INFO("Starting main loop.");

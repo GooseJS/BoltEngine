@@ -29,7 +29,7 @@ namespace Bolt
 	Block& World::getBlockAt(BlockPos pos)
 	{
 		if (pos.y < 0) return BlockManager::getInstance().getBlock(0);
-		else if (pos.y > BOLT_CHUNK_WIDTH * BOLT_WORLD_HEIGHT) return BlockManager::getInstance().getBlock(0);
+		else if (pos.y >= BOLT_CHUNK_WIDTH * BOLT_WORLD_HEIGHT) return BlockManager::getInstance().getBlock(0);
 		return getChunkAt(pos)->getBlockAt(pos);
 	}
 

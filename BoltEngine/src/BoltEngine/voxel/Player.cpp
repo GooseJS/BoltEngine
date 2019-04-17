@@ -33,6 +33,11 @@ namespace Bolt
 		_playerCamera.rotateCamera(rotX, rotY);
 	}
 
+	void Player::jump()
+	{
+		// TODO(Brendan): This function
+	}
+
 	void Player::updatePos()
 	{
 		// Gravity
