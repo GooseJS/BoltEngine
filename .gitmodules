@@ -25,3 +25,9 @@
 [submodule "lib/debug-draw"]
 	path = lib/debug-draw
 	url = https://github.com/glampert/debug-draw.git
+[submodule "lib/libnoise"]
+	path = lib/libnoise
+	url = https://github.com/qknight/libnoise.git
+[submodule "lib/cpp-taskflow"]
+	path = lib/cpp-taskflow
+	url = https://github.com/cpp-taskflow/cpp-taskflow.git

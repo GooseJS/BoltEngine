@@ -19,14 +19,16 @@ namespace Bolt
 
 	struct PlayerConfig
 	{
-		float moveSpeed = 1.0f;
+		float moveSpeed = 3.0f;
 
-		float jumpPower = 100.0f;
+		float jumpPower = 3.5f;
 
 		float gravity = 5.0f;
 
 		glm::vec3 maxAcceleration = glm::vec3(10.f);
 		glm::vec3 maxVelocity = glm::vec3(50.f);
+
+		float jumpTimer = 0.6f;
 	};
 
 	struct PlayerCapabilities
@@ -49,7 +51,9 @@ namespace Bolt
 		bool collidingNX = false;
 		bool collidingPX = false;
 
-		bool _jumping = false;
+		bool jumping = false;
+
+		float currentJumpTime = 0.0f;
 	};
 
 	class Player
@@ -69,7 +73,7 @@ namespace Bolt
 	public:
 		Player()
 		{
-			_position = glm::vec3(5.f, 15.f, 5.f);
+			_position = glm::vec3(5.f, 100.f, 5.f);
 			_playerCamera.setCameraPos(_position.x, _position.y + 1.75f, _position.z);
 		}
 

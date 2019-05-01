@@ -18,13 +18,11 @@ namespace Bolt
 			if (movement.moveLeftPressed)
 				_velocity += _playerCamera.getRight() * glm::vec3(_playerConfig.moveSpeed);
 
-			if (movement.jumpPressed && !_jumping)
+			if (movement.jumpPressed && !_playerData.jumping && _playerData.onGround)
 			{
 				_velocity.y += _playerConfig.jumpPower;
-				_jumping = true;
+				_playerData.jumping = true;
 			}
-			else if (!movement.jumpPressed)
-				_jumping = false;
 		}
 	}
 
@@ -45,17 +43,16 @@ namespace Bolt
 			_acceleration.y -= _playerConfig.gravity;
 		else
 		{
-			//glm::vec3 friction = -_velocity * glm::vec3(4.f);
-			//friction.y = 0.0f;
-			//_acceleration += friction;
-			
-			//_jumping = false;
-			//
-			//_position.y = ceil(_position.y);
-
 			if (_acceleration.y < 0) _acceleration.y = 0.0f;
 			if (_velocity.y < 0) _velocity.y = 0.0f;
-			_jumping = false;
+		}
+
+		if (_playerData.jumping)
+			_playerData.currentJumpTime += 0.01f;
+		if (_playerData.currentJumpTime >= _playerConfig.jumpTimer)
+		{
+			_playerData.currentJumpTime = 0.000f;
+			_playerData.jumping = false;
 		}
 
 		//_acceleration = clampVec3(_acceleration, -_playerConfig.maxAcceleration, _playerConfig.maxAcceleration);

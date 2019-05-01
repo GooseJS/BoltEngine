@@ -19,10 +19,14 @@ IncludeDir["stb"] = "lib/stb"
 IncludeDir["imgui"] = "lib/imgui"
 IncludeDir["json"] = "lib/json/include"
 IncludeDir["debugDraw"] = "lib/debug-draw"
+IncludeDir["libnoise"] = "lib/libnoise/src"
+IncludeDir["noiseutils"] = "lib/libnoise/noiseutils"
+IncludeDir["taskflow"] = "lib/cpp-taskflow"
 
 include "premake/glfw"
 include "premake/glew"
 include "premake/imgui"
+include "premake/libnoise"
 
 project "BoltEngine"
 	location "BoltEngine"
@@ -50,6 +54,9 @@ project "BoltEngine"
 		"%{IncludeDir.bullet}",
 		"%{IncludeDir.json}",
 		"%{IncludeDir.debugDraw}",
+		"%{IncludeDir.libnoise}",
+		"%{IncludeDir.noiseutils}",
+		"%{IncludeDir.taskflow}",
 		"%{prj.name}/src"
 	}
 
@@ -57,8 +64,8 @@ project "BoltEngine"
 	{
 		"GLFW",
 		"GLEW",
-		"Box2D",
 		"ImGui",
+		"libnoise",
 		"opengl32.lib"
 	}
 
@@ -75,7 +82,8 @@ project "BoltEngine"
 		defines
 		{
 			"BOLT_WIN32",
-			"BOLT_BUILD_DLL"
+			"BOLT_BUILD_DLL",
+			"NOISE_STATIC"
 		}
 
 	filter "configurations:Debug"
@@ -116,6 +124,9 @@ project "BoltEditor"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.json}",
 		"%{IncludeDir.debugDraw}",
+		"%{IncludeDir.libnoise}",
+		"%{IncludeDir.noiseutils}",
+		"%{IncludeDir.taskflow}",
 		"%{prj.name}/src"
 	}
 
@@ -123,7 +134,6 @@ project "BoltEditor"
 	{
 		"GLEW",
 		"GLFW",
-		"Box2D",
 		"ImGui",
 		"opengl32.lib",
 		"BoltEngine"
@@ -131,7 +141,7 @@ project "BoltEditor"
 
 	defines
 	{
-		""
+		"NOISE_STATIC"
 	}
 
 	filter "system:windows"

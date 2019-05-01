@@ -14,7 +14,9 @@
 #include <BoltEngine/event/EventSystem.h>
 #include <BoltEngine/voxel/Player.h>
 #include <BoltEngine/util/BoltProfiler.h>
+#include <BoltEngine/util/TaskScheduler.h>
 #include <BoltEngine/render/DebugRenderer.h>
+#include <BoltEngine/voxel/EarthWorldGenerator.h>
 
 namespace Bolt
 {
@@ -35,6 +37,8 @@ namespace Bolt
 			Shader shader; 
 
 			BoltDebugDrawInterface debugRenderer;
+
+			EarthWorldGenerator generator;
 		public:
 			BoltEditor()
 			{
@@ -67,22 +71,18 @@ namespace Bolt
 
 				worldRenderer.initRenderer();
 
-				for (int x = 0; x < 16; x++)
-				{
-					for (int y = 0; y < 16; y++)
-					{
-						for (int z = 0; z < 16; z++)
-						{
-							if (y < 10)
-								world.setBlockAt(BlockPos(x, y, z), grassBlock);
-						}
-					}
-				}
+				generator.setup();
 
-				worldRenderer.createChunkMesh(world.getChunkAt(BlockPos(5, 5, 5)));
-				world.getChunkAt(BlockPos(5, 5, 5))->getMesh().uploadMesh();
-				worldRenderer.createChunkMesh(world.getChunkAt(BlockPos(32, 75, 36)));
-				world.getChunkAt(BlockPos(375, 5, 36))->getMesh().uploadMesh();
+				generator.generateChunk(world.getChunkColumnAt(ChunkPos(0, 0, 0)));
+				generator.generateChunk(world.getChunkColumnAt(ChunkPos(0, 0, 1)));
+				generator.generateChunk(world.getChunkColumnAt(ChunkPos(1, 0, 1)));
+				generator.generateChunk(world.getChunkColumnAt(ChunkPos(1, 0, 0)));
+
+				world.setWorldGenerator(&generator);
+				
+				worldRenderer.initialBuild(&world);
+
+				TaskScheduler::getInstance().startTaskThread();
 			}
 
 			virtual void update() override
@@ -96,6 +96,10 @@ namespace Bolt
 					getMainWindow().setShouldClose();
 
 				player.checkCollisions(&world);
+
+				world.updateRenderChunksFromPos(BlockPos(player.getX(), player.getY(), player.getZ()), &worldRenderer);
+
+				TaskScheduler::getInstance().update();
 			}
 			
 			virtual void draw(float updateDistance) override

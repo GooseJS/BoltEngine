@@ -13,6 +13,7 @@
 
 namespace Bolt
 {
+	/// A simple enum to represent an Axis
 	enum Axis
 	{
 		X = 0,
@@ -21,6 +22,7 @@ namespace Bolt
 		COUNT = 3
 	};
 
+	/// Holds the actual data for what block is where in each chunk
 	struct ChunkStorage
 	{
 	private:
@@ -30,12 +32,13 @@ namespace Bolt
 		Block& setBlockAt(int index, const Block& block);
 	};
 
+	/// A slice of a chunk on a certain axis (x, y, or z) to be able to skip rendering if it is empty or surrounded by full slices
 	struct ChunkSlice
 	{
 	private:
-		int _count;
-		bool _full;
-		bool _empty;
+		int _count; /// The amount of blocks currently in the slice
+		bool _full; /// If the slice is full or not
+		bool _empty; /// If the slice is empty or not
 	public:
 		void addBlock(const Block& block)
 		{
@@ -61,15 +64,17 @@ namespace Bolt
 		inline const bool isEmpty() const { return _empty; }
 	};
 
+	/// A Chunk consists of the ChunkStorage (which actually stores the blocks) as well as a mesh for rendering
 	class BOLT_API Chunk
 	{
 	private:
-		ChunkPos _pos;
-		ChunkStorage _storage;
-        BoltChunkMesh* _mesh = nullptr;
-        class World* _containingWorld;
+		ChunkPos _pos; /// The position of this chunk
+		ChunkStorage _storage; /// The chunks block storage
+        BoltChunkMesh* _mesh = nullptr; /// The chunks mesh
+        class World* _containingWorld; /// The world this chunk is contained in
+		class ChunkColumn* _containingColumn; /// The chunk column this chunk is contained in
 
-		ChunkSlice _slices[Axis::COUNT][BOLT_CHUNK_WIDTH];
+		ChunkSlice _slices[Axis::COUNT][BOLT_CHUNK_WIDTH]; /// The chunk slices per axis for rendering optimization
 
 	public:
 		Chunk(ChunkPos pos);
@@ -85,20 +90,30 @@ namespace Bolt
 
         inline void setContainingWorld(World* world) { _containingWorld = world; }
 		inline World* getContainingWorld() const { return _containingWorld; }
+		inline void setContainingColumn(ChunkColumn* column) { _containingColumn = column; }
+		inline ChunkColumn* getContainingColumn() const { return _containingColumn; }
 
-		inline ChunkPos getPos() const { return _pos; }
+ 		inline ChunkPos getPos() const { return _pos; }
 
 		inline const ChunkSlice& getSliceAt(Axis axis, int value) const { return _slices[axis][value]; }
+
+		void generateMesh();
 	};
 
 	typedef Chunk* ChunkPtr;
+	typedef std::vector<ChunkPtr> ChunkList;
 
+	/// A wrapper to hold a column of chunks. Makes hashing and chunk lookups easier as the y value can be ignored in the initial lookup and only used for the last step
 	class BOLT_API ChunkColumn
 	{
 	private:
-		ChunkPtr* _chunks = nullptr;
+		ChunkPtr* _chunks = nullptr; /// The chunks contained in this column
+
+		volatile bool _initiallyGenerated = false; /// If initial world generation has run on this column or not yet
+
+		volatile bool _generating = false; /// If the column is currently being generated
 	public:
-		ChunkColumn(World* containingWorld, int x, int z)
+		ChunkColumn(class World* containingWorld, int x, int z)
 		{
 			_chunks = (ChunkPtr*)malloc(sizeof(ChunkPtr) * BOLT_WORLD_HEIGHT);
 			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
@@ -116,6 +131,14 @@ namespace Bolt
 			}
 			free(_chunks);
 		}
+
+		inline void setGenerated(bool generated) { _initiallyGenerated = generated; }
+		inline bool isGenerated() { return _initiallyGenerated; }
+
+		inline void setGenerating(bool generating) { _generating = generating; }
+		inline bool isGenerating() { return _generating; }
+
+		inline bool inColumn(ChunkPos pos) { return pos.x == _chunks[0]->getPos().x && pos.z == _chunks[0]->getPos().z; }
 
 		inline Block& getBlockAt(ChunkBlockPos pos) { return _chunks[pos.chunkPos.y]->getBlockAt(pos); }
 		inline Block& setBlockAt(ChunkBlockPos pos, const Block& block) { return _chunks[pos.chunkPos.y]->setBlockAt(pos, block); }
