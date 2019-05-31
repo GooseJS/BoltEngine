@@ -44,6 +44,7 @@ namespace Bolt
 		bool building = false;
 		bool needsRebuild = true;
 		bool initialized = false;
+		bool empty = true;
 
 		GLuint _vaoID;
 		GLuint _vertexBufferID;

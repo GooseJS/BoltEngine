@@ -56,6 +56,8 @@ namespace Bolt
 		numIndices = _triangles.size() * 3;
 		numVertices = _vertices.size();
 
+		empty = _triangles.empty();
+
 		_triangles.clear();
 		_vertices.clear();
 

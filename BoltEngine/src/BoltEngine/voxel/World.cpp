@@ -18,11 +18,14 @@ namespace Bolt
 		}
 		else // No chunk found, need to create / load it
 		{
-			ChunkColumn* chunkColumn = DBG_NEW ChunkColumn(this, pos.x, pos.z);
+			ChunkColumn* chunkColumn = _chunkPool.getFreeChunk();
 			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++) // Filling up all the chunks in the chunk column and doing initial setup
 			{
-				chunkColumn->getChunkAt(pos.y)->setContainingWorld(this);
-				chunkColumn->getChunkAt(pos.y)->setContainingColumn(chunkColumn);
+				ChunkPos tempPos = pos;
+				tempPos.y = y;
+				chunkColumn->getChunkAt(y)->setPos(tempPos);
+				chunkColumn->getChunkAt(y)->setContainingWorld(this);
+				chunkColumn->getChunkAt(y)->setContainingColumn(chunkColumn);
 			}
 			foundChunk = chunkColumn->getChunkAt(pos.y);				// Get the chunk they asked for
 			_lastAccessedChunk = chunkColumn;							// Cache the chunk column
@@ -33,6 +36,10 @@ namespace Bolt
 
 	ChunkColumn* World::getChunkColumnAt(ChunkPos pos)
 	{
+		if (pos.y < 0)
+			pos.y = 0;
+		else if (pos.y > BOLT_WORLD_HEIGHT)
+			pos.y = BOLT_WORLD_HEIGHT;
 		if (_lastAccessedChunk != nullptr && _lastAccessedChunk->inColumn(pos)) // Check if this chunkcolumn is the last accessed chunk column as we already have it cached
 			return _lastAccessedChunk;
 
@@ -44,11 +51,14 @@ namespace Bolt
 		}
 		else // No chunkcolumn found, need to create / load it
 		{
-			ChunkColumn* chunkColumn = DBG_NEW ChunkColumn(this, pos.x, pos.z);
+			ChunkColumn* chunkColumn = _chunkPool.getFreeChunk();
 			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++) // Initial setup for the chunk column
 			{
-				chunkColumn->getChunkAt(pos.y)->setContainingWorld(this);
-				chunkColumn->getChunkAt(pos.y)->setContainingColumn(chunkColumn);
+				ChunkPos tempPos = pos;
+				tempPos.y = y;
+				chunkColumn->getChunkAt(y)->setPos(tempPos);
+				chunkColumn->getChunkAt(y)->setContainingWorld(this);
+				chunkColumn->getChunkAt(y)->setContainingColumn(chunkColumn);
 			}
 			_lastAccessedChunk = chunkColumn; // Caching the column
 			_chunkMap.insert(std::make_pair(pos.value, chunkColumn));
@@ -122,5 +132,21 @@ namespace Bolt
 				}
 			}
 		});
+
+		for (auto iter = _chunkMap.begin(); iter != _chunkMap.end(); iter++)
+		{
+			ChunkColumn* chunkColumn = iter->second;
+			ChunkPos chunkPos = chunkColumn->getChunkAt(0)->getPos();
+			ChunkPos playerChunkPos(pos);
+			int renderDistanceBuffer = _renderDistance + 1;
+			if (abs(chunkPos.x - playerChunkPos.x) >= renderDistanceBuffer)
+			{
+				if (abs(chunkPos.z - playerChunkPos.z) >= renderDistanceBuffer)
+				{
+					iter = _chunkMap.erase(iter);
+					_chunkPool.freeChunk(chunkColumn);
+				}
+			}
+		}
 	}
 }

@@ -55,22 +55,22 @@ namespace Bolt
 
 		mesh.building = true;
 
-		for (int x = 0; x < BOLT_CHUNK_WIDTH; x++)
+		for (int y = 0; y < BOLT_CHUNK_WIDTH; y++)
 		{
-			const ChunkSlice& xSlice = getSliceAt(Axis::X, x);
-			if (xSlice.isEmpty() || xSlice.isFull())
+			const ChunkSlice& ySlice = getSliceAt(Axis::Y, y);
+			if (ySlice.isEmpty()) // TODO(Brendan): Can skip rendering the full slice if the surrounding slices are also full
 				continue;
 
-			for (int y = 0; y < BOLT_CHUNK_WIDTH; y++)
+			for (int x = 0; x < BOLT_CHUNK_WIDTH; x++)
 			{
-				const ChunkSlice& ySlice = getSliceAt(Axis::Y, y);
-				if (ySlice.isEmpty() || ySlice.isFull())
+				const ChunkSlice& xSlice = getSliceAt(Axis::X, x);
+				if (xSlice.isEmpty())
 					continue;
 
 				for (int z = 0; z < BOLT_CHUNK_WIDTH; z++)
 				{
 					const ChunkSlice& zSlice = getSliceAt(Axis::Z, z);
-					if (zSlice.isEmpty() || zSlice.isFull())
+					if (zSlice.isEmpty())
 						continue;
 
 					Block& currentBlock = getBlockAt(ChunkBlockPos(x, y, z, chunkPos));

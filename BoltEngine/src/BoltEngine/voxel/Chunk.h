@@ -1,6 +1,9 @@
 #pragma once
 
+#include <queue>
+
 #include "BoltEngine/Core.h"
+#include "BoltEngine/render/imgui/BoltImGui.h"
 
 #include "Types.h"
 #include "Block.h"
@@ -30,15 +33,17 @@ namespace Bolt
 	public:
 		Block& getBlockAt(int index);
 		Block& setBlockAt(int index, const Block& block);
+
+		inline void reset() { memset(_storage, 0, sizeof(_storage)); }
 	};
 
 	/// A slice of a chunk on a certain axis (x, y, or z) to be able to skip rendering if it is empty or surrounded by full slices
 	struct ChunkSlice
 	{
 	private:
-		int _count; /// The amount of blocks currently in the slice
-		bool _full; /// If the slice is full or not
-		bool _empty; /// If the slice is empty or not
+		int _count = 0; /// The amount of blocks currently in the slice
+		bool _full = false; /// If the slice is full or not
+		bool _empty = true; /// If the slice is empty or not
 	public:
 		void addBlock(const Block& block)
 		{
@@ -50,18 +55,21 @@ namespace Bolt
 			_full = false;
 			_empty = false;
 
-			if (_count == BOLT_CHUNK_AREA && !_full)
+			if (_count >= BOLT_CHUNK_AREA)
 				_full = true;
-			else if (_full)
+			else
 				_full = false;
-			else if (_count == 0 && !_empty)
+
+			if (_count <= 0)
 				_empty = true;
-			else if (_empty)
+			else
 				_empty = false;
 		}
 
 		inline const bool isFull() const { return _full; }
 		inline const bool isEmpty() const { return _empty; }
+
+		inline void reset() { _count = 0; _full = false; _empty = true; }
 	};
 
 	/// A Chunk consists of the ChunkStorage (which actually stores the blocks) as well as a mesh for rendering
@@ -69,7 +77,7 @@ namespace Bolt
 	{
 	private:
 		ChunkPos _pos; /// The position of this chunk
-		ChunkStorage _storage; /// The chunks block storage
+		ChunkStorage _storage; /// The     chunks block storage
         BoltChunkMesh* _mesh = nullptr; /// The chunks mesh
         class World* _containingWorld; /// The world this chunk is contained in
 		class ChunkColumn* _containingColumn; /// The chunk column this chunk is contained in
@@ -77,6 +85,7 @@ namespace Bolt
 		ChunkSlice _slices[Axis::COUNT][BOLT_CHUNK_WIDTH]; /// The chunk slices per axis for rendering optimization
 
 	public:
+		Chunk() {}
 		Chunk(ChunkPos pos);
 		~Chunk()
 		{
@@ -94,10 +103,36 @@ namespace Bolt
 		inline ChunkColumn* getContainingColumn() const { return _containingColumn; }
 
  		inline ChunkPos getPos() const { return _pos; }
+		inline void setPos(ChunkPos pos) { _pos = pos; }
 
 		inline const ChunkSlice& getSliceAt(Axis axis, int value) const { return _slices[axis][value]; }
 
 		void generateMesh();
+
+		inline void debugDraw(bool makeWindow = false)
+		{
+			if (makeWindow) ImGui::Begin(std::string("Chunk: ").append(_pos.toString()).c_str());
+
+			ImGui::Text(std::string("Pos: ").append(_pos.toString()).c_str());
+
+			if (makeWindow) ImGui::End();
+		}
+
+		inline void reset()
+		{
+			_storage.reset();
+			for (int axis = 0; axis < Axis::COUNT; axis++)
+			{
+				for (int width = 0; width < BOLT_CHUNK_WIDTH; width++)
+					_slices[axis][width].reset();
+			}
+			if (_mesh != nullptr)
+			{
+				_mesh->empty = true;
+				_mesh->numVertices = 0;
+				_mesh->numIndices = 0;
+			}
+		}
 	};
 
 	typedef Chunk* ChunkPtr;
@@ -113,6 +148,15 @@ namespace Bolt
 
 		volatile bool _generating = false; /// If the column is currently being generated
 	public:
+		ChunkColumn()
+		{
+			_chunks = (ChunkPtr*)malloc(sizeof(ChunkPtr) * BOLT_WORLD_HEIGHT);
+			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
+			{
+				_chunks[y] = DBG_NEW Chunk(); // TODO(Brendan): Look into placement new
+			}
+		}
+
 		ChunkColumn(class World* containingWorld, int x, int z)
 		{
 			_chunks = (ChunkPtr*)malloc(sizeof(ChunkPtr) * BOLT_WORLD_HEIGHT);
@@ -121,6 +165,16 @@ namespace Bolt
 				_chunks[y] = DBG_NEW Chunk(ChunkPos(x, y, z)); // TODO(Brendan): Look into placement new
 				_chunks[y]->setContainingWorld(containingWorld);
 			}
+		}
+
+		inline void reset()
+		{
+			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
+			{
+				_chunks[y]->reset();
+			}
+			_initiallyGenerated = false;
+			_generating = false;
 		}
 
 		~ChunkColumn()
@@ -144,5 +198,29 @@ namespace Bolt
 		inline Block& setBlockAt(ChunkBlockPos pos, const Block& block) { return _chunks[pos.chunkPos.y]->setBlockAt(pos, block); }
 
 		inline ChunkPtr getChunkAt(int y) { return _chunks[y]; }
+	};
+
+	class BOLT_API ChunkPool
+	{
+	private:
+		std::queue<ChunkColumn*> _freeChunkQueue;
+	public:
+		void freeChunk(ChunkColumn* column)
+		{
+			column->reset();
+			_freeChunkQueue.push(column);
+		}
+
+		ChunkColumn* getFreeChunk()
+		{
+			if (!_freeChunkQueue.empty())
+			{
+				ChunkColumn* retVal = _freeChunkQueue.back();
+				_freeChunkQueue.pop();
+				return retVal;
+			}
+
+			return DBG_NEW ChunkColumn();
+		}
 	};
 }

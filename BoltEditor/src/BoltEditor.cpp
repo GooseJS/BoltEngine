@@ -53,7 +53,7 @@ namespace Bolt
 
 				EventSystem::getInstance().addListener<EventMouseMove>(BOLT_SUBSCRIBE_EVENT(&BoltEditor::onMouseMove));
 
-				getMainWindow().disableCursor();
+				//getMainWindow().disableCursor();
 
 				ImGuiContext* imGuiContext = Bolt::BoltImGui::getInstance().init(getMainWindow());
 				ImGui::SetCurrentContext(imGuiContext);
@@ -124,6 +124,7 @@ namespace Bolt
 				worldRenderer.renderWorld(&world);
 
 				player.debugDraw();
+				world.getChunkAt(ChunkPos(0, 0, 0))->debugDraw(true);
 
 				static bool demoWindowShown = false;
 				//ImGui::ShowDemoWindow(&demoWindowShown);
@@ -137,7 +138,7 @@ namespace Bolt
 
 			virtual void onShutdown() override
 			{
-
+				TaskScheduler::getInstance().joinTaskThread();
 			}
 
 			void onMouseMove(EventMouseMove mouseMoveEvent)

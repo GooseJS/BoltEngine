@@ -84,13 +84,16 @@ namespace Bolt
 			for (int y = 0; y < BOLT_WORLD_HEIGHT; y++)
 			{
 				ChunkPtr chunk = chunkColumn->getChunkAt(y);
-				if (chunk->getMesh().initialized)
+				if (!chunk->getMesh().empty)
 				{
-					translation = glm::mat4(1.0f);
-					translation = glm::translate(translation, glm::vec3(chunk->getPos().x * BOLT_CHUNK_WIDTH, chunk->getPos().y * BOLT_CHUNK_WIDTH, chunk->getPos().z * BOLT_CHUNK_WIDTH));
-					glUniformMatrix4fv(_worldRenderShader.uniform("translationMatrix"), 1, GL_FALSE, &translation[0][0]);
-					glBindVertexArray(chunk->getMesh()._vaoID);
-					glDrawElements(GL_TRIANGLES, chunk->getMesh().numIndices, GL_UNSIGNED_INT, nullptr);
+					if (chunk->getMesh().initialized)
+					{
+						translation = glm::mat4(1.0f);
+						translation = glm::translate(translation, glm::vec3(chunk->getPos().x * BOLT_CHUNK_WIDTH, chunk->getPos().y * BOLT_CHUNK_WIDTH, chunk->getPos().z * BOLT_CHUNK_WIDTH));
+						glUniformMatrix4fv(_worldRenderShader.uniform("translationMatrix"), 1, GL_FALSE, &translation[0][0]);
+						glBindVertexArray(chunk->getMesh()._vaoID);
+						glDrawElements(GL_TRIANGLES, chunk->getMesh().numIndices, GL_UNSIGNED_INT, nullptr);
+					}
 				}
 			}
 		}

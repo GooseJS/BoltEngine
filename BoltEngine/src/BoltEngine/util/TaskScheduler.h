@@ -110,6 +110,16 @@ namespace Bolt
 		void startTaskThread();
 		inline void stopTaskThread() { _workerThreadsRunning = false; }
 
+		inline void joinTaskThread()
+		{
+			stopTaskThread();
+			for (auto& workerThread : _workerThreads)
+			{
+				if (workerThread.joinable())
+					workerThread.join();
+			}
+		}
+
 		void update();
 
 		void workerThreadExec();

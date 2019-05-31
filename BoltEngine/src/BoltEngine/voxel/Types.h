@@ -3,6 +3,7 @@
 #include "BoltEngine/Core.h"
 #include <cstdint>
 #include <vector>
+#include <string>
 
 #ifndef BOLT_CHUNK_WIDTH
 #define BOLT_CHUNK_WIDTH 16
@@ -32,6 +33,11 @@ namespace Bolt
 		BlockPos(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
 
 		BlockPos(const struct ChunkBlockPos& blockPos);
+
+		inline std::string toString()
+		{
+			return std::string("(X: ").append(std::to_string(x)).append(", Y: ").append(std::to_string(y)).append(", Z: ").append(std::to_string(z)).append(")");
+		}
 	};
 
 	/// A struct to hold a chunk X and Z, as well as a Y. They are seperated as the X and Z are used for hashing and lookup, while the Y is
@@ -68,6 +74,11 @@ namespace Bolt
 
 		/// Turns a ChunkPos into a block pos, but can also apply an offset to get to a specific blockpos in a chunk
         BlockPos toBlockPos(int x, int y, int z);
+
+		inline std::string toString()
+		{
+			return std::string("(X: ").append(std::to_string(x)).append(", Y: ").append(std::to_string(y)).append(", Z: ").append(std::to_string(z)).append(")");
+		}
 	};
 
 	/// A ChunkBlockPos is a ChunkPos with an offset to hold specific blocks in specific chunks (i.e, the block at 4x4x4 in each chunk)
@@ -94,6 +105,11 @@ namespace Bolt
 		const int index()
 		{
 			return x | y << 4 | z << 8;
+		}
+
+		inline std::string toString()
+		{
+			return std::string("(X: ").append(std::to_string(x)).append(", Y: ").append(std::to_string(y)).append(", Z: ").append(std::to_string(z)).append("Chunk: ").append(chunkPos.toString()).append(")");
 		}
 	};
 

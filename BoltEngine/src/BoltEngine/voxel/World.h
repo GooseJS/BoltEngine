@@ -19,19 +19,21 @@ namespace Bolt
 	class World
 	{
 	private:
+		ChunkPool _chunkPool; /// Managing getting new chunks and freeing old chunks
+
 		ChunkMap _chunkMap; /// All the chunks currently stored in the world
 		ChunkColumn* _lastAccessedChunk = nullptr; /// The last accessed chunk column (cached to speed up lookups)
 
 		ChunkList _rebuildChunks; /// The list of chunks that need to have their meshes rebuilt
 		ChunkColumnList _unloadChunks; /// The list of chunks that need to be unloaded from memory
-		ChunkColumnList _freeChunks; /// A list of chunks that have been loaded and can be re-used so new data doesn't have to be allocated
+		//ChunkColumnList _freeChunks; /// A list of chunks that have been loaded and can be re-used so new data doesn't have to be allocated
 		std::vector<std::future<ChunkPtr>> _generatingChunks; /// The list of chunks that need to have world generation run on them
 
 		std::mutex _unloadMtx;
 
 		WorldGenerator* _generator; /// The current world generator
 
-		int _renderDistance = 5; // TODO(Brendan): Render distance should be pulled out and put into a different system. It feels weird in here
+		int _renderDistance = 2; // TODO(Brendan): Render distance should be pulled out and put into a different system. It feels weird in here
 	public:
 		World() {}
 		~World()
